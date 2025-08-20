@@ -1,0 +1,37 @@
+[
+    
+{
+    "id":1,
+"name": "Cabbages",
+"imageUrl":
+    "https://creazilla-store.fra1.digitaloceanspaces.com/cliparts/1502591/cabbage-clipart-md.png",
+"price": 9.9,
+
+"description": "In this tutorial, we’ll be attempting to develop a shopping app by using Flutter for Ios, Android, and web platforms"
+
+},
+{
+    "id":12,
+"name": "Tomatoes",
+"imageUrl": "https://pngimg.com/uploads/tomato/tomato_PNG12594.png",
+"price": 7.9,
+
+"description": "per kg"},
+{
+    "id":3,
+"name": "Potatoes",
+"imageUrl":
+    "https://www.freeiconspng.com/uploads/slice-of-potato-png-5.png",
+"price": 9.9,
+
+"description": "per kg"},
+{
+    "id":5,
+"name": "Strawberries",
+"imageUrl":
+"https://www.freeiconspng.com/uploads/strawberry-png-9.png",
+"price": 9.9,
+"description": "per kg"
+}
+    
+]
