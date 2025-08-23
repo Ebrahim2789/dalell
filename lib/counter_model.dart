@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 void main() {
   runApp(MaterialApp(
     theme: ThemeData.light(),
-    home: ExamplePage(),
+    home: const ExamplePage(),
   ));
 }
 

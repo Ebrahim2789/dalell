@@ -2,7 +2,7 @@ import 'dart:async';
 import 'package:dalell/container/info_page.dart';
 import 'package:dalell/container/listdemo.dart';
 import 'package:path/path.dart';
-import 'product.dart';
+import 'data/models/product.dart';
 import 'package:flutter/material.dart';
 //in main.dart write this:
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -193,7 +193,7 @@ class _MyAppState extends State<MyApp> {
 
   void _addProduct() async {
     Product newProduct = Product(
-      id: 68,
+      id: 600,
       name: "name",
       description: "description",
       price: 78,
@@ -240,3 +240,28 @@ class _MyAppState extends State<MyApp> {
     );
   }
 }
+
+
+    class User {
+      final int? id;
+      final String name;
+      final String email;
+
+      User({this.id, required this.name, required this.email});
+
+      Map<String, dynamic> toMap() {
+        return {
+          'id': id,
+          'name': name,
+          'email': email,
+        };
+      }
+
+      factory User.fromMap(Map<String, dynamic> map) {
+        return User(
+          id: map['id'],
+          name: map['name'],
+          email: map['email'],
+        );
+      }
+    }

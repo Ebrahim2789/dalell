@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -15,7 +15,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: ProductManagerPage(),
+      home: const ProductManagerPage(),
       
     );
   }
@@ -57,7 +57,7 @@ class ProductManagerPage extends StatelessWidget {
           Expanded(
             child: ListView(
               padding: const EdgeInsets.all(8.0),
-              children: [
+              children: const [
                 ProductItem(
                   title: 'Grapes Mature',
                   subtitle: 'classified',
@@ -84,7 +84,7 @@ class ProductManagerPage extends StatelessWidget {
                 backgroundColor: Colors.blue,
                 minimumSize: const Size(double.infinity, 50),
               ),
-              child: Text('Add'),
+              child: const Text('Add'),
             ),
           ),
           BottomNavigationBar(
@@ -125,7 +125,7 @@ class ProductItem extends StatelessWidget {
             backgroundColor: Colors.blue,
             padding: const EdgeInsets.symmetric(horizontal: 8),
           ),
-          child: Text('Edit'),
+          child: const Text('Edit'),
         ),
       ),
     );

@@ -37,9 +37,9 @@ class _ProfileScreenState extends State<ProfileScreen>
       // ..add(const HomePage())
        ..add(const Dashboard())  
       ..add(const ProductPage())
-      ..add( LuckyDrawPage())
-      ..add( TeamPage())
-      ..add( MePage ());
+      ..add( const LuckyDrawPage())
+      ..add( const TeamPage())
+      ..add( const MePage ());
     _currentPage = const LoginPages();
   }
 

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:dalell/views/rest_password.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});

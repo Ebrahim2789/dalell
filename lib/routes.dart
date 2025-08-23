@@ -79,7 +79,7 @@ class RouteGenerator {
         );
       case signup:
         return MaterialPageRoute(
-          builder: (_) => SignUpPage(),
+          builder: (_) => const SignUpPage(),
         );
       case passwordRecoveryScreen:
         return MaterialPageRoute(
