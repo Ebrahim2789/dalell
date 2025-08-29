@@ -7,7 +7,7 @@ import '../../../utils/result.dart';
 
 class ProductListViewModel extends ChangeNotifier {
   ProductListViewModel({required ProductRepository ProductRepository})
-    : _ProductRepository = ProductRepository {
+      : _ProductRepository = ProductRepository {
     load = Command0<void>(_load)..execute();
     add = Command1<void, String>(_add);
     delete = Command1<void, int>(_delete);

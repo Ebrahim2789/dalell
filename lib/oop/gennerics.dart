@@ -1,51 +1,51 @@
-// // A basic generic class
-// // This type can hold anything
-// class Optional<T> {
-//   final T _value;
-//   T get value => _value;
+// A basic generic class
+// This type can hold anything
+class Optional<T> {
+  final T _value;
+  T get value => _value;
 
-//   const Optional(this._value);
+  const Optional(this._value);
 
-//   bool exists() => _value != null;
-// }
+  bool exists() => _value != null;
+}
 
-// // A constrained generic class
-// // Only type that implement the printable interface
-// // can be used for this class
-// abstract class Loggable {
-//   void log();
-// }
+// A constrained generic class
+// Only type that implement the printable interface
+// can be used for this class
+abstract class Loggable {
+  void log();
+}
 
-// class LoggableList<T extends Loggable> {
-//   final List<T> loggables;
+class LoggableList<T extends Loggable> {
+  final List<T> loggables;
 
-//   LoggableList(this.loggables);
-//   void printAll() {
-//     final Iterable<int> it = [1, 2, 3].where((_) => true);
+  LoggableList(this.loggables);
+  void printAll() {
+    final Iterable<int> it = [1, 2, 3].where((_) => true);
 
-//     for (Loggable logable in loggables) {
-//       logable.log();
-//     }
-//   }
-// }
+    for (Loggable logable in loggables) {
+      logable.log();
+    }
+  }
+}
 
-// class LoggableString implements Loggable {
-//   final String text;
+class LoggableString implements Loggable {
+  final String text;
 
-//   const LoggableString(this.text);
+  const LoggableString(this.text);
 
-//   @override
-//   void log() {
-//     print(text);
-//   }
-// }
+  @override
+  void log() {
+    print(text);
+  }
+}
 
 // // A generic function.
 // // The type is defined between the name of the function
 // // and the parameter list
-// T adder<T extends num>(T a, T b) {
-//   return a + b;
-// }
+num adder<T extends num>(T a, T b) {
+  return a + b;
+}
 
 // void genericsPlayground() {
 //   final a = const Optional<int>(10);

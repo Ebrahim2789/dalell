@@ -35,8 +35,16 @@ class MyApp extends StatelessWidget {
 
   
   
-class AddProductPage extends StatelessWidget {
+class AddProductPage extends StatefulWidget {
   const AddProductPage({super.key});
+
+  @override
+  State<AddProductPage> createState() => _AddProductPageState();
+}
+
+class _AddProductPageState extends State<AddProductPage> {
+
+// late TextEditingController 
 
   @override
   Widget build(BuildContext context) {

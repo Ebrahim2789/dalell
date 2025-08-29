@@ -8,7 +8,7 @@ import 'package:dalell/views/login_page.dart';
 import 'package:dalell/oop/responsive.dart';
 import 'package:dalell/admin/tips_page.dart';
 import 'package:dalell/views/profile_page.dart';
-import 'package:dalell/order/orderconform.dart';
+import 'package:dalell/product/view/orderconform.dart';
 import 'package:dalell/product/product_order_page.dart';
 import 'package:dalell/views/login.dart';
 import 'package:dalell/views/profile_detail.dart';

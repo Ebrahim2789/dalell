@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dalell/models/team_page.dart';
 import 'package:dalell/routes.dart';
-import 'package:path/path.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});

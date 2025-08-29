@@ -1,5 +1,15 @@
-import 'package:flutter/material.dart';
+import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_file_dialog/flutter_file_dialog.dart';
+import 'package:form_builder_file_picker/form_builder_file_picker.dart';
+import 'package:path_provider/path_provider.dart';
+
+final List<String> media = [];
+
+List<PlatformFile> imags=[];
 class ProductEditorPage extends StatefulWidget {
   const ProductEditorPage({super.key});
 
@@ -9,23 +19,33 @@ class ProductEditorPage extends StatefulWidget {
 
 class _ProductEditorPageState extends State<ProductEditorPage> {
   // ---- Mock data / state ----
-  final List<String> media = []; // store paths/urls/base64 after you hook it up
+  // final List<String> media = []; // store paths/urls/base64 after you hook it up
   bool _published = true;
   DateTime? _scheduleDate;
 
   final List<String> _allCategories = const [
-    'Perfume', 'Cosmetics', 'Gifts', 'Men', 'Women', 'Premium', 'New'
+    'Perfume',
+    'Cosmetics',
+    'Gifts',
+    'Men',
+    'Women',
+    'Premium',
+    'New'
   ];
   final Set<String> _selectedCategories = {'Perfume', 'New'};
 
   final List<String> _brands = const [
-    'LTA', 'Noura', 'AromaX', 'EthiScent', 'Dahlia'
+    'LTA',
+    'Noura',
+    'AromaX',
+    'EthiScent',
+    'Dahlia'
   ];
   String? _brand = 'LTA';
 
   // ---- Helpers ----
   Future<void> _pickMedia() async {
-    setState(() => media.add('placeholder'));
+    setState(() => media.add(""));
   }
 
   Future<void> _pickSchedule() async {
@@ -40,7 +60,6 @@ class _ProductEditorPageState extends State<ProductEditorPage> {
   }
 
   void _save() {
-
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text('Saved (UI only). Hook up your logic!')),
     );
@@ -108,7 +127,9 @@ class _ProductEditorPageState extends State<ProductEditorPage> {
                   _SectionCard(
                     title: 'Products Media',
                     subtitle: 'Images & videos that represent this product',
-                    child: _mediaGrid(),
+                    child: 
+                    _FilePick(),
+                    // _mediaGrid(),
                   ),
                   const SizedBox(height: 14),
                   _SectionCard(
@@ -285,7 +306,8 @@ class _ProductEditorPageState extends State<ProductEditorPage> {
               }
             });
           },
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
           selectedColor: const Color(0xFFFFE0B2),
           labelStyle: TextStyle(
             color: selected ? const Color(0xFFBF360C) : Colors.black87,
@@ -313,7 +335,8 @@ class _ProductEditorPageState extends State<ProductEditorPage> {
                     value: b,
                     child: Row(
                       children: [
-                        const Icon(Icons.local_fire_department_outlined, size: 18),
+                        const Icon(Icons.local_fire_department_outlined,
+                            size: 18),
                         const SizedBox(width: 8),
                         Text(b),
                       ],
@@ -372,8 +395,7 @@ class _SectionCard extends StatelessWidget {
           if (subtitle != null) ...[
             const SizedBox(height: 4),
             Text(subtitle!,
-                style:
-                    const TextStyle(fontSize: 12, color: Colors.black54)),
+                style: const TextStyle(fontSize: 12, color: Colors.black54)),
           ],
           const SizedBox(height: 12),
           child,
@@ -382,6 +404,78 @@ class _SectionCard extends StatelessWidget {
     );
   }
 }
+
+class _FilePick extends StatelessWidget {
+  const _FilePick();
+
+  @override
+  Widget build(BuildContext context) {
+    return FormBuilderFilePicker(
+      name: "images",
+      decoration: InputDecoration(labelText: "Attachments"),
+      maxFiles: null,
+      previewImages: true,
+      onChanged: (val) => print(val),
+      // onSaved: (newValue) => ,
+      typeSelectors: [
+        TypeSelector(
+          type: FileType.any,
+          selector: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Icon(Icons.add_circle),
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Text("Add documents"),
+              ),
+            ],
+          ),
+        ),
+      ],
+      
+      onFileLoading: (val) {
+     
+        media.add(val as String);
+           
+        
+          _saveImage(imags.single);
+
+        print(val.name);
+      },
+      onSaved: (newValue) {
+        imags.add(newValue!.single);
+        
+          _saveImage(imags.single);
+      }
+    );
+  }
+}
+
+ String? message;
+
+  Future<void> _saveImage(PlatformFile imageUrl) async {
+    try {
+      // Get temporary directory
+      final dir = await getTemporaryDirectory();
+
+      // Create an image name
+      var filename = '${dir.path}/image.png';
+
+      // Save to filesystem
+      final file = File(filename);
+      // await file.writeAsBytes(imageUrl.);
+
+      // Ask the user to save it
+      final params = SaveFileDialogParams(sourceFilePath: file.path);
+      final finalPath = await FlutterFileDialog.saveFile(params: params);
+
+      if (finalPath != null) {
+        message = 'Image saved to disk';
+      }
+    } catch (e) {
+      message = 'An error occurred while saving the image';
+    }
+  }
 
 class _AddTile extends StatelessWidget {
   final VoidCallback onTap;
@@ -392,7 +486,7 @@ class _AddTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(16),
-      child: const DottedBorder(
+      child: DottedBorder(
         radius: Radius.circular(16),
         child: Center(
           child: Column(
@@ -409,9 +503,43 @@ class _AddTile extends StatelessWidget {
   }
 }
 
-class _MediaTile extends StatelessWidget {
+Future<void> pickFile() async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    type: FileType.image, // Or .image, .video, .audio, .media
+    // allowedExtensions: ['jpeg', 'jpg', 'png'], // Specify allowed extensions for custom type
+    allowMultiple: false, // Set to true to allow multiple file selection
+  );
+
+  if (result != null) {
+    // Access the selected file(s)
+    PlatformFile file = result.files.first; // For single file selection
+    print('Selected file name: ${file.name}');
+    print('Selected file path: ${file.path}');
+    // Further processing of the file can be done here
+  } else {
+    // User canceled the picker
+    print('File picking canceled.');
+  }
+}
+
+class _MediaTile extends StatefulWidget {
   final VoidCallback onRemove;
   const _MediaTile({required this.onRemove});
+
+  @override
+  State<_MediaTile> createState() => _MediaTileState();
+}
+
+class _MediaTileState extends State<_MediaTile> {
+  String imageurl = "assets/images/iphone.png";
+  String? message;
+
+  Future<void> _saveImage(String imageUrl) async {
+   
+    setState(() {
+      imageurl = imageUrl;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -421,8 +549,8 @@ class _MediaTile extends StatelessWidget {
           decoration: BoxDecoration(
             color: const Color(0xFFF3F4F7),
             borderRadius: BorderRadius.circular(16),
-            image: const DecorationImage(
-              image: AssetImage('assets/placeholder-image.png'),
+            image: DecorationImage(
+              image: AssetImage(imageurl),
               fit: BoxFit.cover, // replace with your actual image
             ),
           ),
@@ -431,7 +559,7 @@ class _MediaTile extends StatelessWidget {
           top: 6,
           right: 6,
           child: InkWell(
-            onTap: onRemove,
+            onTap: widget.onRemove,
             child: Container(
               padding: const EdgeInsets.all(4),
               decoration: BoxDecoration(
@@ -474,7 +602,8 @@ class _KVRow extends StatelessWidget {
 class DottedBorder extends StatelessWidget {
   final Widget child;
   final Radius radius;
-  const DottedBorder({super.key, required this.child, this.radius = Radius.zero});
+  const DottedBorder(
+      {super.key, required this.child, this.radius = Radius.zero});
 
   @override
   Widget build(BuildContext context) {
@@ -488,8 +617,7 @@ class DottedBorder extends StatelessWidget {
 }
 
 class _DashedBorder extends RoundedRectangleBorder {
-  _DashedBorder(Radius radius)
-      : super(borderRadius: BorderRadius.all(radius));
+  _DashedBorder(Radius radius) : super(borderRadius: BorderRadius.all(radius));
 
   @override
   void paint(Canvas canvas, Rect rect, {TextDirection? textDirection}) {
