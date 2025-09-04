@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:dalell/routes.dart';
+import 'package:dalell/routes/routes.dart';
 import 'package:provider/provider.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  databaseFactory = databaseFactoryFfi;
   runApp(const MyApp());
 }
 
@@ -23,7 +26,9 @@ class _MyAppState extends State<MyApp> {
         ],
         child: MaterialApp(
           onGenerateTitle: (context) => "Random App",
-          initialRoute: RouteGenerator.HomePages,
+          initialRoute: RouteGenerator.homePages,
+          
+          
 // 2.
           onGenerateRoute: RouteGenerator.generateRoute, // 3.
           debugShowCheckedModeBanner: false,

@@ -67,3 +67,49 @@ num adder<T extends num>(T a, T b) {
 //   final sum = adder(a.value, b.value);
 //   print('Sum is a ${sum.runtimeType} and its value is $sum');
 // }
+
+
+class RainbowIterator<T> implements Iterator {
+
+     late T value;
+  T get values => value;
+
+
+  bool exists() => value != null;
+   RainbowIterator({required this.value});
+  var colors = [];
+
+
+
+
+  var index = 0;
+
+ 
+
+  @override
+  String get current => colors[index++];
+
+  @override
+  bool moveNext() => index < colors.length;
+
+
+}
+
+void main() {
+
+     List<String> title = const [
+    'Perfume',
+    'Cosmetics',
+    'Gifts',
+    'Men',
+    'Women',
+    'Premium',
+    'New'
+  ];
+
+  var rainbowColors = RainbowIterator(value: title);
+  rainbowColors.colors.addAll(title);
+  while (rainbowColors.moveNext()) {
+    print(rainbowColors.current);
+  }
+}

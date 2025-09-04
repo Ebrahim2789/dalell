@@ -1,14 +1,17 @@
 // product_repository.dart
 import 'package:dalell/product/models/database_helper.dart';
 import 'package:dalell/product/repositories/brand_repository.dart';
+import 'package:dalell/product/repositories/category_repository.dart';
 import 'package:dalell/product/repositories/generic_repository.dart';
 import 'package:dalell/product/repositories/product_ateribute_repository.dart';
 import 'package:dalell/product/repositories/product_media_repository.dart';
 import 'package:dalell/product/repositories/product_repository.dart';
-import 'package:dalell/product/view/orderconform.dart';
-import 'package:dalell/utils/result.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/product.dart';
+import 'package:dalell/product/models/brand.dart';
+import 'package:dalell/product/models/category.dart';
+import 'package:dalell/product/models/media.dart';
+import 'package:dalell/product/models/product_attribute.dart';
 
 class ProductController {
   final dbHelper = DatabaseHelper.instance;
@@ -26,7 +29,7 @@ class ProductController {
 
   final brandRepo = BrandRepository();
 
-  List<Product> _Products = [];
+  final List<Product> _Products = [];
 
   List<Product> get Products => _Products;
 
@@ -93,20 +96,33 @@ class ProductController {
 
     // Fetch product with media
     List<Product> products = await productRepo.getAllProductsWithMedia();
-
-
-
     for (var p in products) {
-      print("Product: ${p.name}, Price: ${p.price}");
+      // print("Product: ${p.name}, Price: ${p.price}");
       List<Media> list = await mediaRepo.getMediaByProduct(p.id!);
 
       for (var m in list ) {
-        print("   Media is : ${m.url} (${m.type})");
-        p.media.add(m);
-
-           
-        
+        // print("   Media is : ${m.url} (${m.type})");
+        p.media.add(m);        
       }
+      List<ProductAttribute> attributList =
+          await attributRepo.getAProductAteribute(p.id!);
+
+      for (var atterMap in attributList) {
+
+        List<ProductOption> optionList =
+            await optionRepo.getProductOptionByProduct(atterMap.id!);
+        // attributList
+        //     .add(ProductAttribute.fromMap(atterMap.toMap(), options: optionList));
+
+    p.attributes.add(ProductAttribute.fromMap(
+          atterMap.toMap(), options: optionList));
+
+      }
+Category category= await categorRepo.getCategoryById(1);
+p.category=category;
+
+Brand brand= await brandRepo.getBrandById(2);
+p.brand=brand;
 
   
     }

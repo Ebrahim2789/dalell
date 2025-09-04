@@ -88,10 +88,35 @@
 //       });
 // }
 
-
-
-
 // void main(){
 
 // print(Platform.isLinux);
 // }
+
+import 'package:dalell/product/models/product.dart';
+import 'package:flutter/material.dart';
+
+List<Product> data = [];
+Widget gridViewBuilderContainer(Widget child, List<Product> product) {
+  data = product;
+
+  return GridView.builder(
+    padding: const EdgeInsets.all(4.0),
+    itemCount: data.length,
+    shrinkWrap: true,
+    physics: const ScrollPhysics(),
+    gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 200,
+        childAspectRatio: 3 / 4.8,
+        crossAxisSpacing: 10,
+        mainAxisSpacing: 10),
+    itemBuilder: (context, index) {
+      var product = data[index];
+      print(product.name);
+      return GestureDetector(
+        onTap: () {},
+        child: child,
+      );
+    },
+  );
+}

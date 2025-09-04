@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dalell/routes.dart';
+import 'package:dalell/routes/routes.dart';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -181,7 +181,7 @@ class MePage extends StatelessWidget {
       onTap: () => (title) {
         if (title == "My orders") {
           Navigator.of(context).pushNamed(
-            RouteGenerator.HomePages,
+            RouteGenerator.homePages,
           );
         } else if (title == "Redeem code") {
           Navigator.of(context).pushNamed(
@@ -189,7 +189,7 @@ class MePage extends StatelessWidget {
           );
         } else if (title == "Change Password") {
           Navigator.of(context).pushNamed(
-            RouteGenerator.RestPassword,
+            RouteGenerator.restPassword,
           );
         } else {
           Navigator.of(context).pushNamed(

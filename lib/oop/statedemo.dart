@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dalell/views/profile_page.dart';
+import 'package:dalell/views/user/profile_page.dart';
 
 class StateDemo extends StatefulWidget {
   const StateDemo({super.key});

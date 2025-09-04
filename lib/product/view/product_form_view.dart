@@ -2,6 +2,7 @@
 
 import 'dart:io';
 
+import 'package:dalell/config/theme/themedata.dart';
 import 'package:dalell/product/controller/product_controller.dart';
 import 'package:dalell/product/models/product.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
@@ -9,6 +10,24 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:flutter/material.dart';
 import 'package:form_builder_file_picker/form_builder_file_picker.dart';
 
+import 'package:dalell/product/models/brand.dart';
+import 'package:dalell/product/models/category.dart';
+void main() {
+  runApp(const ProductApp());
+}
+
+class ProductApp extends StatelessWidget {
+  const ProductApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Product App',
+      theme: appTheme(),
+      home: const ProductForm(),
+    );
+  }
+}
 
 class ProductFormView extends StatefulWidget {
   final Product? product; // if not null → edit mode
@@ -20,6 +39,7 @@ class ProductFormView extends StatefulWidget {
 }
 
 class _ProductFormViewState extends State<ProductFormView> {
+  
   final _formKey = GlobalKey<FormState>();
   final ProductController controller = ProductController();
 
@@ -44,10 +64,10 @@ class _ProductFormViewState extends State<ProductFormView> {
         description: descCtrl.text,
 
         price: double.tryParse(priceCtrl.text) ?? 0, 
-       brandId: 1,
-      //  Brand(id: 1, name: 'SoundMax', logoUrl: 'assets/images/image2.jpg'),
-      categoryId: 2,
-      // Category(id: 1, name: 'Electronics'),
+       brand: 
+       Brand(id: 1, name: 'SoundMax', logoUrl: 'assets/images/image2.jpg'),
+      category: 
+      Category(id: 1, name: 'Electronics'),
          media: [],
         attributes: [], options: [], 
       );
@@ -69,7 +89,10 @@ class _ProductFormViewState extends State<ProductFormView> {
           AppBar(title: Text(widget.product == null ? "Add Product" : "Edit Product")),
       body: Padding(
         padding: EdgeInsets.all(16),
-        child: Form(
+        child: 
+        
+        
+        Form(
           key: _formKey,
           child: Column(children: [
             TextFormField(
@@ -104,10 +127,10 @@ class ProductForm extends StatefulWidget {
   const ProductForm({super.key});
 
   @override
-  _ProductFormState createState() => _ProductFormState();
+  ProductFormState createState() => ProductFormState();
 }
 
-class _ProductFormState extends State<ProductForm> {
+class ProductFormState extends State<ProductForm> {
   final _formKey = GlobalKey<FormBuilderState>();
 
   List<dynamic> _selectedFiles = [];

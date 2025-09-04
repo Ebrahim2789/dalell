@@ -13,4 +13,13 @@ class AppRoutes {
     auth: (context) => const AuthScreen(),
     settings: (context) => const SettingsScreen(),
   };
+
+  
+}
+class RouteObserverServices extends NavigatorObserver{
+String ? currentRoute;
+String? getCurrentRouter(Route routes,Route? perviousRoute){
+  currentRoute=routes.settings.name;
+  return currentRoute;
+}
 }

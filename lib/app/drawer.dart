@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dalell/routes.dart';
+import 'package:dalell/routes/routes.dart';
 
 class TabbarWidget extends StatefulWidget {
   const TabbarWidget({super.key, required String title});
@@ -39,25 +39,29 @@ class _MenuListTileWidgetState extends State<MenuListTileWidget> {
         ListTile(
           leading: const Icon(Icons.account_circle),
           title: const Text('home'),
-
-               onTap:(){
-                Navigator.of(context).pushNamed(  RouteGenerator.HomePages,);
-              }, 
-      
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              RouteGenerator.homePages,
+            );
+          },
         ),
         ListTile(
           leading: const Icon(Icons.star),
           title: const Text('Star'),
-             onTap:(){
-                Navigator.of(context).pushNamed(  RouteGenerator.HomePages,);
-              }, 
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              RouteGenerator.homePages,
+            );
+          },
         ),
         ListTile(
           leading: const Icon(Icons.alarm),
           title: const Text('Box'),
-             onTap:(){
-                Navigator.of(context).pushNamed(  RouteGenerator.HomePages,);
-              }, 
+          onTap: () {
+            Navigator.of(context).pushNamed(
+              RouteGenerator.homePages,
+            );
+          },
         ),
         const Divider(
           color: Colors.grey,
@@ -85,31 +89,38 @@ class _LeftDrawerWidgetState extends State<LeftDrawerWidget> {
   @override
   Widget build(BuildContext context) {
     return Drawer(
+      backgroundColor: Colors.grey,
       child: ListView(
-        padding: EdgeInsets.zero,
+        padding: EdgeInsets.all(10),
         children: const [
           UserAccountsDrawerHeader(
-            currentAccountPicture: Icon(
-              Icons.face,
-              color: Colors.white,
-              size: 48.0,
+            
+            // currentAccountPictureSize:   Size.fromRadius(30.0),
+            // otherAccountsPicturesSize: Size.square(40.0),
+            // currentAccountPicture: CircleAvatar(
+            //     radius: 50,
+            //     backgroundColor: Colors.orange,
+            //     child: Icon(
+            //       Icons.person,
+            //     )),
+       
+      decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: Colors.orangeAccent,
+                image: DecorationImage(image:AssetImage ("assets/images/user.png"))
             ),
-            accountName: Text('Abre'),
+                //  margin: EdgeInsets.only(top: 10),
+            accountName: Text('Abre',style: TextStyle(),),
             accountEmail: Text('abre@gmail'),
-            otherAccountsPictures: [
-              Icon(
-                Icons.bookmark_add_outlined,
-                color: Colors.blue,
-              ),
-            ],
-            decoration: BoxDecoration(
-                image: DecorationImage(
-                  
-                    image: AssetImage(
-                      'assets/images/user.png',
-                    ),
-                    fit: BoxFit.cover)),
+
+            //   otherAccountsPictures: [
+
+            // Image(image: AssetImage("assets/images/user.png"))
+            //   ],
+      
+            
           ),
+          Divider(),
           MenuListTileWidget(),
         ],
       ),

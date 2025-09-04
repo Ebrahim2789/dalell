@@ -30,6 +30,7 @@ dependencies:
   flutter_file_dialog: ^3.0.2
   uuid: ^4.5.1
   cached_network_image: ^3.4.1
+  badges: 
   # google_fonts: ^6.3.0
 
 dev_dependencies:

@@ -1,119 +1,11 @@
 
 import 'package:dalell/product/models/basemodel.dart';
+import 'package:dalell/product/models/brand.dart';
+import 'package:dalell/product/models/category.dart';
+import 'package:dalell/product/models/media.dart';
+import 'package:dalell/product/models/product_attribute.dart';
 
 
-class Brand extends Basemodel {
-  @override
-  int? id;
-  final String name;
-  final String logoUrl;
-
-  Brand({required this.id, required this.name, required this.logoUrl});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-      'logoUrl': logoUrl,
-    };
-  }
-
-  factory Brand.fromMap(Map<dynamic, dynamic> map) =>
-      Brand(id: map['id'], name: map['name'], logoUrl: map['logoUrl']);
-}
-
-class Category {
-  final int id;
-  final String name;
-
-  Category({required this.id, required this.name});
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'name': name,
-    };
-  }
-
-  factory Category.fromMap(Map<dynamic, dynamic> map) => Category(
-        id: map['id'],
-        name: map['name'],
-      );
-}
-
-class Media {
-  int? id;
-  int productid;
-  final String url;
-  final String type; // e.g., 'image', 'video'
-
-  Media(
-      {this.id,
-      required this.productid,
-      required this.url,
-      required this.type});
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'productid': productid,
-      'url': url,
-      'type': type,
-    };
-  }
-
-  factory Media.fromMap(Map<dynamic, dynamic> map) => Media(
-      id: map['id'],
-      productid: map['productid'],
-      url: map['url'],
-      type: map['type']);
-}
-// attribute.dart
-
-class ProductAttribute {
-  int? id;
-  final String name;
-  int? productId;
-  final List<ProductOption> options;
-
-  ProductAttribute({this.id, this.productId, required this.name, required this.options});
-
-  Map<String, dynamic> toMap() {
-    return {
-      'id':id,
-      'name': name,
-      'productId':productId,
-    };
-  }
-
-  factory ProductAttribute.fromMap(
-    Map<dynamic, dynamic> map, {
-    List<ProductOption> options = const [],
-  }) =>
-      ProductAttribute(name: map['name'], 
-      id:map['id'],
-      productId: map['productId'],
-      
-      options: options);
-}
-
-class ProductOption {
-
-  int? attributeId;
-  final String value;
-
-  ProductOption({ required this.value});
-
-  Map<String, dynamic> toMap() {
-    return { 'value': value,'attributeId':attributeId};
-  }
-
-  factory ProductOption.fromMap(
-    Map<dynamic, dynamic> map,
-  ) =>
-      ProductOption(
-   
-        value: map['value'],
-      );
-}
 
 class Product extends Basemodel {
   @override
@@ -121,8 +13,8 @@ class Product extends Basemodel {
   final String name;
   final String description;
   final double price;
-  int brandId;
-  int categoryId;
+  Brand? brand;
+  Category? category;
   final List<Media> media;
   final List<ProductAttribute> attributes;
   final List<ProductOption> options;
@@ -132,20 +24,24 @@ class Product extends Basemodel {
     required this.name,
     required this.description,
     required this.price,
-    required this.brandId,
-    required this.categoryId,
-    this.media = const [],
-    this.attributes = const [],
-    this.options = const [],
-  });
+    brand,
+    category,
+    List<Media>? media,
+   List<ProductAttribute>? attributes,
+    List<ProductOption>? options,
+  })
 
+  : media = media ?? [],
+        attributes = attributes ?? [],options=options?? [];
+
+  @override
   Map<String, dynamic> toMap() {
     return {
       'id': id,
       'name': name,
       'description': description,
-      'brandId': brandId,
-      'categoryId': categoryId,
+      'brand': brand,
+      'category': category,
       'price': price,
       // 'media': media,
       // 'attributes': attributes,
@@ -155,20 +51,22 @@ class Product extends Basemodel {
 
   factory Product.fromMap(
     Map<dynamic, dynamic> map, {
-    List<Media> media = const [],
-    List<ProductAttribute> attributes = const [],
-    List<ProductOption> option = const [],
+Brand? brand,
+Category? category,
+   List<Media>? media,
+   List<ProductAttribute>? attributes,
+    List<ProductOption>? options,
   }) =>
       Product(
         id: map['id'],
         name: map['name'],
         description: map['description'],
-        brandId: map['brandId'],
-        categoryId: map['categoryId'],
+        brand: brand,
+        category:category,
         price: map['price'],
         media: media,
         attributes: attributes,
-        options: option,
+        options: options,
       );
 }
 
@@ -179,12 +77,12 @@ class StaticData {
       name: 'Wireless Headphones',
       description: 'High-quality wireless headphones with noise cancellation.',
       price: 199.99,
-      brandId: 2,
-      // Brand(
-      //     id: 1, name: 'SoundMax', logoUrl: 'assets/images/image2.jpg'),
-      categoryId: 1,
+      brand: 
+      Brand(
+          id: 1, name: 'SoundMax', logoUrl: 'assets/images/image2.jpg'),
+      category: 
 
-      // Category(id: 1, name: 'Electronics'),
+      Category(id: 1, name: 'Electronics'),
       media: [
         Media(
             id: 3,
@@ -223,16 +121,14 @@ class StaticData {
       name: 'Smart Watch',
       description: 'Sleek smartwatch with fitness tracking and notifications.',
       price: 299.99,
-      brandId: 1,
+      brand: 
 
-      //  Brand(
-      //   id: 2,
-      //   name: 'TechTrend',
-      //   logoUrl: 'assets/images/image2.jpg',
-      // ),
-      categoryId: 2,
-
-      //  Category(id: 2, name: 'Wearables'),
+       Brand(
+        id: 2,
+        name: 'TechTrend',
+        logoUrl: 'assets/images/image2.jpg',
+      ),
+      category: Category(id: 2, name: 'Wearables'),
       media: [
         Media(
             id: 5,

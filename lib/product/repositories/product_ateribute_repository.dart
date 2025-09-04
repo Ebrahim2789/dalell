@@ -1,7 +1,7 @@
 // product_media_repository.dart
 
 import 'package:dalell/product/models/database_helper.dart';
-import 'package:dalell/product/models/product.dart';
+import 'package:dalell/product/models/product_attribute.dart';
 
 class ProductAteributeRepository {
   final dbHelper = DatabaseHelper.instance;

@@ -3,7 +3,6 @@
 import 'package:dalell/product/models/basemodel.dart';
 import 'package:dalell/product/models/database_helper.dart';
 import 'package:dalell/utils/result.dart';
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 class GenericRepository<T extends Basemodel> {

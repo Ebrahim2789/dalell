@@ -1,6 +1,11 @@
-import 'package:dalell/routes.dart';
+import 'package:dalell/config/app_routes.dart';
+import 'package:dalell/routes/routes.dart';
 import 'package:flutter/material.dart';
 
+final routeObserverServices=RouteObserverServices();
+    String? routes=routeObserverServices.currentRoute;
+
+    String? activeRoute=routes == "homePages" ? RouteGenerator.marchentPages : routes == "marchentPages" ? RouteGenerator.marchentPages:routes;
 enum Menu { menus, logout, download, preview, link, setting }
 
 class Menus {
@@ -53,7 +58,7 @@ class _PopupMenuButtonWidgetState extends State<PopupMenuButtonWidget> {
           actions: [
             IconButton(
               onPressed: () {
-                Navigator.of(context).pushNamed(  RouteGenerator.HomePages,);
+                Navigator.of(context).pushNamed(  RouteGenerator.homePages,);
               },
               icon: const Icon(Icons.add),
             ),
@@ -68,7 +73,7 @@ class _PopupMenuButtonWidgetState extends State<PopupMenuButtonWidget> {
                   case Menu.logout:
                     Navigator.pop(context);
                   case Menu.download:
-                    Navigator.of(context).pushNamed(RouteGenerator.HomePages,);
+                    Navigator.of(context).pushNamed(RouteGenerator.homePages,);
 
                   case Menu.preview:
                     break;
@@ -166,3 +171,148 @@ class _PopupMenuButtonWidgetState extends State<PopupMenuButtonWidget> {
         ));
   }
 }
+
+
+
+  PopupMenuButton<Menu> popUpMenuButtonForHomes() {
+
+
+
+    return PopupMenuButton<Menu>(itemBuilder: (context) {
+          return  [
+            PopupMenuItem<Menu>(
+              value: Menu.logout,
+              onTap:(){
+
+    
+              Navigator.popAndPushNamed(context,RouteGenerator.marchentPages);
+                
+              
+            
+            }, 
+              child: const ListTile(
+                  title: Text('Log out'),
+                  leading: Icon(Icons.logout_outlined)),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.logout,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.homePages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.note_add_outlined),
+                title: Text('NewNote'),
+              ),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.link,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.homePages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.share_outlined),
+                title: Text('Share'),
+              ),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.download,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.homePages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.link_outlined),
+                title: Text('Get link'),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<Menu>(
+              value: Menu.preview,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.homePages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.delete_outline),
+                title: Text('Remove'),
+              ),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.setting,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.homePages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.visibility_outlined),
+                title: Text('Setting'),
+              ),
+            ),
+          ];
+        });
+  }
+
+  PopupMenuButton<Menu> popUpMenuButtonForAll() {
+    return PopupMenuButton<Menu>(itemBuilder: (context) {
+          return  [
+            PopupMenuItem<Menu>(
+              value: Menu.logout,
+              onTap:(){
+            Navigator.popAndPushNamed(context, RouteGenerator.homePages);
+                
+            }, 
+              child: const ListTile(
+                  title: Text('Log out'),
+                  leading: Icon(Icons.logout_outlined)),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.logout,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.marchentPages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.note_add_outlined),
+                title: Text('NewNote'),
+              ),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.link,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.marchentPages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.share_outlined),
+                title: Text('Share'),
+              ),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.download,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.marchentPages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.link_outlined),
+                title: Text('Get link'),
+              ),
+            ),
+            const PopupMenuDivider(),
+            PopupMenuItem<Menu>(
+              value: Menu.preview,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.marchentPages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.delete_outline),
+                title: Text('Remove'),
+              ),
+            ),
+            PopupMenuItem<Menu>(
+              value: Menu.setting,
+                   onTap:(){
+              Navigator.of(context).pushNamed(  RouteGenerator.marchentPages,);
+            }, 
+              child: const ListTile(
+                leading: Icon(Icons.visibility_outlined),
+                title: Text('Setting'),
+              ),
+            ),
+          ];
+        });
+  }
