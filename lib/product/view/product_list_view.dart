@@ -1,7 +1,6 @@
 // product_repository.dart
 
 import 'package:dalell/app/star.dart';
-import 'package:dalell/container/container.dart';
 import 'package:dalell/product/repositories/brand_repository.dart';
 import 'package:dalell/product/repositories/category_repository.dart';
 import 'package:dalell/product/repositories/product_media_repository.dart';
@@ -100,7 +99,7 @@ class ProductListViewState extends State<ProductListView> {
               itemBuilder: (context, index) {
 
                 final product = products[index];
-                return Flexible(
+                return SizedBox(
                   child: padding(context, product, index, sizes),
                 );
               },
@@ -127,8 +126,8 @@ Widget padding(
       onTap: () => _openForm(product: product),
       child: Card(
         clipBehavior: Clip.antiAliasWithSaveLayer,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Wrap(
+          
           children: [
             // Product Image (using first media URL)
             // Container(

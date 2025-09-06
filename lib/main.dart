@@ -1,7 +1,11 @@
+import 'package:dalell/views/user/bloc/auth_event.dart';
+import 'package:dalell/views/user/bloc/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:dalell/routes/routes.dart';
 import 'package:provider/provider.dart';
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' ;
+import 'views/user/bloc/auth_bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +21,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
+  @override
+void initState() {
+  super.initState();
+  checkLogin();
+}
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -24,21 +34,27 @@ class _MyAppState extends State<MyApp> {
           Provider<DataCache>(create: (_) => DataCache()),
           ChangeNotifierProvider<Something>(create: (_) => Something()),
         ],
-        child: MaterialApp(
-          onGenerateTitle: (context) => "Random App",
-          initialRoute: RouteGenerator.homePages,
-          
-          
+        child: BlocProvider(
+            create: (context) => AuthBloc()..add(CheckAuthStatus()),
+            child: MaterialApp(
+              onGenerateTitle: (context) => "Random App",
+              
+              initialRoute: RouteGenerator.homePages,
+
 // 2.
-          onGenerateRoute: RouteGenerator.generateRoute, // 3.
-          debugShowCheckedModeBanner: false,
-        ));
+              onGenerateRoute: RouteGenerator.generateRoute, // 3.
+              debugShowCheckedModeBanner: false,
+            )));
   }
 }
+
+
 
 class Something with ChangeNotifier {
   final description = "something is better than nothing";
   final descriptionCache = {};
 }
 
-class DataCache {}
+class DataCache {
+
+}

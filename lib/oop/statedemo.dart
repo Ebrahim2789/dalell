@@ -372,15 +372,16 @@ class CategorySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
+      child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Expanded(
-            flex: 2,
+          SizedBox(
+            
             child: Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
           ),
-          Expanded(
-            flex: 3,
+        
+          SizedBox(
+            
             child: Wrap(
               spacing: 8.0,
               runSpacing: 8.0,
@@ -435,7 +436,7 @@ class ProductInspirationCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Row(
+      child: Wrap(
         children: [
           Container(
             width: 150,

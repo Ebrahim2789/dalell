@@ -1,5 +1,3 @@
-
-
 import 'package:flutter/material.dart';
 
 void main() {
@@ -20,6 +18,10 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
+
+
 
 class ProductPromoPage extends StatelessWidget {
   const ProductPromoPage({super.key});
@@ -59,26 +61,36 @@ class ProductPromoPage extends StatelessWidget {
               ),
             ),
             const SizedBox(height: 16),
-      
             const SizedBox(height: 16),
             Card(
               elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
               child: ListTile(
-                leading:  Image.asset('assets/images/image2.jpg',fit: BoxFit.cover,height: 100,),
+                leading: Image.asset(
+                  'assets/images/image2.jpg',
+                  fit: BoxFit.cover,
+                  height: 100,
+                ),
                 title: const Text('Product Promo 1'),
                 subtitle: const Text('Promo details here...'),
-                trailing: const Icon(Icons.favorite_border, color: Colors.green),
+                trailing:
+                    const Icon(Icons.favorite_border, color: Colors.green),
               ),
             ),
             Card(
               elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
               child: ListTile(
-                leading: Image.asset('assets/images/image2.jpg',height: 100,),
+                leading: Image.asset(
+                  'assets/images/image2.jpg',
+                  height: 100,
+                ),
                 title: const Text('Product Promo 2'),
                 subtitle: const Text('Promo details here...'),
-                trailing: const Icon(Icons.favorite_border, color: Colors.green),
+                trailing:
+                    const Icon(Icons.favorite_border, color: Colors.green),
               ),
             ),
             const SizedBox(height: 16),
@@ -87,27 +99,37 @@ class ProductPromoPage extends StatelessWidget {
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
-
-            
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 Card(
                   child: Column(
                     children: [
-                 Image.asset('assets/images/image2.jpg',fit: BoxFit.cover,height: 200,),
+                      Image.asset(
+                        'assets/images/image2.jpg',
+                        fit: BoxFit.cover,
+                        height: 200,
+                      ),
                       const Text('Tomato', style: TextStyle(fontSize: 16)),
-                      const Text('Price: \$2.99', style: TextStyle(color: Colors.green)),
-                      IconButton(onPressed: (){}, icon: Icon(Icons.shopping_cart_checkout))
+                      const Text('Price: \$2.99',
+                          style: TextStyle(color: Colors.green)),
+                      IconButton(
+                          onPressed: () {},
+                          icon: Icon(Icons.shopping_cart_checkout))
                     ],
                   ),
                 ),
                 Card(
                   child: Column(
                     children: [
-                           Image.asset('assets/images/image2.jpg',fit: BoxFit.cover,height: 200,),
+                      Image.asset(
+                        'assets/images/image2.jpg',
+                        fit: BoxFit.cover,
+                        height: 200,
+                      ),
                       const Text('Noodles', style: TextStyle(fontSize: 16)),
-                      const Text('Price: \$3.49', style: TextStyle(color: Colors.green)),
+                      const Text('Price: \$3.49',
+                          style: TextStyle(color: Colors.green)),
                     ],
                   ),
                 ),

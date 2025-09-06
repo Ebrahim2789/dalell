@@ -1,11 +1,48 @@
+import 'package:dalell/routes/routes.dart';
+import 'package:dalell/views/user/bloc/auth_bloc.dart';
+import 'package:dalell/views/user/bloc/auth_state.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+class SignInPage extends StatefulWidget {
+  const SignInPage({super.key});
+  @override
+  State<SignInPage> createState() => _SignInPageState();
+}
 
-class LoginPages extends StatelessWidget {
-  const LoginPages({super.key});
+class _SignInPageState extends State<SignInPage> {
+  // late AuthBloc _authBloc; 
 
+  bool _isLoggedIn=false;
+ 
+  @override
+  Future<void> initState() async {
+  
+    super.initState();
+       bool loggedIn = await isLoggedIn();
+       _isLoggedIn=loggedIn;
+  }
+
+  
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    
+    return  BlocListener<AuthBloc, AuthState>(
+      listener: (context, state) {
+        if (state is AuthAuthenticated) {
+          // Navigate based on user role
+          if (state.user.role == 'admin') {
+            Navigator.pushReplacementNamed(context, RouteGenerator.marchentPages);
+          } else {
+            Navigator.pushReplacementNamed(context, RouteGenerator.homePages);
+          }
+        }
+        if (state is AuthAuthenticated) {
+          // Show error or stay on login
+        }
+      },
+      child: 
+    
+    Scaffold(
         appBar: AppBar(
           title: const Text('Sign in or create account'),
           // leading: IconButton(
@@ -72,7 +109,12 @@ class LoginPages extends StatelessWidget {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+
+                    if(!_isLoggedIn){
+                    Navigator.pushReplacementNamed(context, RouteGenerator.loginScreen);
+                    }
+                  },
                   icon: const Icon(Icons.email),
                   label: const Text('Continue with email'),
                   style: ElevatedButton.styleFrom(
@@ -90,9 +132,12 @@ class LoginPages extends StatelessWidget {
                   color: Colors.grey[300],
                   child: const Center(child: Text('Person holding box')),
                 ),
+                 
+                        
               ],
             ),
+            
           ),
-        ]));
+        ])));
   }
 }

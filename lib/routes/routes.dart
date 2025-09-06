@@ -1,15 +1,16 @@
 import 'package:dalell/home.dart';
 import 'package:dalell/marchent_page.dart';
+import 'package:dalell/product/view/categories_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dalell/coustomer_page.dart';
 import 'package:dalell/models/Usermodel.dart';
-import 'package:dalell/views/user/login_page.dart';
+import 'package:dalell/views/user/sign_in_option_page.dart';
 import 'package:dalell/oop/responsive.dart';
 import 'package:dalell/views/user/profile_page.dart';
 import 'package:dalell/product/view/product_editor_page.dart';
 import 'package:dalell/product/view/product_order_page.dart';
 import 'package:dalell/views/user/login.dart';
-import 'package:dalell/views/user/profile_detail.dart';
+import 'package:dalell/views/user/profile_edit.dart';
 import 'package:dalell/views/user/rest_password.dart';
 
 // const homePages = '/HomePage';
@@ -27,7 +28,7 @@ class RouteGenerator {
 
   static const String profileDetail = '/ProfileDetail';
   static const String loginScreen = '/LoginScreen';
-  static const String loginPage = '/LoginPage';
+  static const String signInPage = '/signInPage';
   static const String productDetails = '/BuildBodyLayou';
 
   static const String categoriesPage = '/categories';
@@ -40,9 +41,12 @@ class RouteGenerator {
   static const String productOrderPage = '/ProductOrderPage';
 // 3.
   RouteGenerator._();
-  
+
 
   static Route<dynamic> generateRoute(RouteSettings settings) {
+
+
+    
 //4.
     switch (settings.name) {
       case homePages:
@@ -99,9 +103,9 @@ class RouteGenerator {
             title: '',
           ),
         );
-      case loginPage:
+      case SignInPage:
         return MaterialPageRoute(
-          builder: (_) => const LoginPages(),
+          builder: (_) => const SignInPage(),
         );
       case loginScreen:
         return MaterialPageRoute(

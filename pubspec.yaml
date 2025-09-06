@@ -31,6 +31,8 @@ dependencies:
   uuid: ^4.5.1
   cached_network_image: ^3.4.1
   badges: 
+  equatable: ^2.0.5
+  flutter_bloc: 
   # google_fonts: ^6.3.0
 
 dev_dependencies:

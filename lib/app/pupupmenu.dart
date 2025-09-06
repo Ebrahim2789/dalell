@@ -1,6 +1,9 @@
 import 'package:dalell/config/app_routes.dart';
 import 'package:dalell/routes/routes.dart';
+import 'package:dalell/views/user/bloc/auth_bloc.dart';
+import 'package:dalell/views/user/bloc/auth_event.dart' show LogoutRequested;
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 final routeObserverServices=RouteObserverServices();
     String? routes=routeObserverServices.currentRoute;
@@ -71,7 +74,7 @@ class _PopupMenuButtonWidgetState extends State<PopupMenuButtonWidget> {
 
                 switch (item) {
                   case Menu.logout:
-                    Navigator.pop(context);
+                  context.read<AuthBloc>().add(LogoutRequested());
                   case Menu.download:
                     Navigator.of(context).pushNamed(RouteGenerator.homePages,);
 
@@ -197,7 +200,7 @@ class _PopupMenuButtonWidgetState extends State<PopupMenuButtonWidget> {
             PopupMenuItem<Menu>(
               value: Menu.logout,
                    onTap:(){
-              Navigator.of(context).pushNamed(  RouteGenerator.homePages,);
+             context.read<AuthBloc>().add(LogoutRequested());
             }, 
               child: const ListTile(
                 leading: Icon(Icons.note_add_outlined),

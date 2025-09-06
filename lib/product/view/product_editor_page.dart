@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:dalell/oop/tree.dart';
 import 'package:dalell/product/controller/product_controller.dart';
 import 'package:dalell/product/models/product.dart';
 import 'package:dalell/product/models/product_attribute.dart';
@@ -85,16 +86,16 @@ class ProductEditorPageState extends State<ProductEditorPage> {
 
   late List<Product> pro = [];
   void _loadAllProductFilds() async {
-    pro.first.name != "goods";
-    pro.last.name != "goods";
+    // pro.first.name != "goods";
+    // pro.last.name != "goods";
 
-    late Iterator<dynamic> data = pa.iterator;
-    int a = 0;
+    // late Iterator<dynamic> data = pa.iterator;
+    // int a = 0;
 
-    while (data.moveNext()) {
-      pro.first.attributes[a].options != data.current;
-      a++;
-    }
+    // while (data.moveNext()) {
+    //   pro.first.attributes[a].options != data.current;
+    //   a++;
+    // }
 
 // Insert a brand
     List<Brand> brand = await brandRepo.getAllBrands();
@@ -150,8 +151,12 @@ class ProductEditorPageState extends State<ProductEditorPage> {
         brand: Brand(
             id: _brand, name: 'SoundMax', logoUrl: 'assets/images/image2.jpg'),
         category: Category(id: _selectedCategories.first, name: ''),
-        media: [],
-        attributes: [],
+        media: [
+          
+        ],
+        attributes: [
+          
+        ],
         options: [],
       );
 
@@ -170,18 +175,15 @@ class ProductEditorPageState extends State<ProductEditorPage> {
   }
 
   final List<String> medias = [];
+  final List<String> _media =
+      []; // store paths/urls/base64 after you hook it up
 
   bool _published = true;
   DateTime? _scheduleDate;
 
   // ---- Helpers ----
-  Future<void> _pickMedia() async {
-    medias.add("");
-    // for (var url in widget.product!.media) {
-    //   // medias.add(url.url);
-
-    //   setState(() => media.add(url.url));
-    // }
+  Future<void> _pickMedia(String filenam) async {
+    setState(() => _media.add(filenam));
   }
 
   Future<void> _pickSchedule() async {
@@ -283,7 +285,9 @@ class ProductEditorPageState extends State<ProductEditorPage> {
                       _SectionCard(
                         title: 'Products Media',
                         subtitle: 'Images & videos that represent this product',
-                        child: _FilePick(),
+                        child: _mediaGrid(),
+
+                        // _FilePick(),
 
                         // _mediaGrid(),
                       ),
@@ -297,7 +301,7 @@ class ProductEditorPageState extends State<ProductEditorPage> {
                       _SectionCard(
                         title: 'Products Option',
                         subtitle: 'Control visibility & schedule',
-                        child: optionsPick(pro, pro.length),
+                        child: _atterbuteClip(),
                       ),
                     ],
                   ),
@@ -435,8 +439,6 @@ class ProductEditorPageState extends State<ProductEditorPage> {
   }
 
   Widget optionsPick(List<Product> product, int index) {
-
-
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
       Text(
         'Media:',
@@ -469,9 +471,7 @@ class ProductEditorPageState extends State<ProductEditorPage> {
                     fit: BoxFit.cover,
                   ),
                 ),
-           
-                ),
-              
+              ),
             );
           },
         ),
@@ -479,14 +479,13 @@ class ProductEditorPageState extends State<ProductEditorPage> {
     ]);
   }
 
-  // ---- UI Pieces ----
   Widget _mediaGrid() {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         GridView.builder(
           shrinkWrap: true,
-          itemCount: media.length + 1,
+          itemCount: _media.length + 1,
           physics: const NeverScrollableScrollPhysics(),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
@@ -495,13 +494,13 @@ class ProductEditorPageState extends State<ProductEditorPage> {
             childAspectRatio: 1,
           ),
           itemBuilder: (context, index) {
-            final isAdd = index == media.length;
+            final isAdd = index == _media.length;
             if (isAdd) {
-              return _AddTile(onTap: _FilePick.new);
+              return _AddTile(onTap: _saveImage);
             }
             return _MediaTile(
-              onRemove: () => setState(() => media.removeAt(index)),
-            );
+                onRemove: () => setState(() => _media.removeAt(index)),
+                media: _media);
           },
         ),
         const SizedBox(height: 8),
@@ -511,6 +510,30 @@ class ProductEditorPageState extends State<ProductEditorPage> {
         ),
       ],
     );
+  }
+
+  Future<void> _saveImage() async {
+    try {
+      // Get temporary directory
+      final Directory dir = await getApplicationDocumentsDirectory();
+      FilePickerResult? result =
+          await FilePicker.platform.pickFiles(type: FileType.image);
+      PlatformFile platformFile = result!.files.first;
+      final String filenam =
+          'images${DateTime.now().millisecond}.${platformFile.extension}';
+      var paths = '${dir.path}/$filenam';
+      // Save to filesystem
+      final File file = File(platformFile.path!);
+      // final File newimage = await file.copy(paths);
+
+      // print("imagepath =${newimage.uri}");
+      // var url=(newimage.uri).toString();
+
+      // _pickMedia(filenam);
+      _pickMedia('assets/images/image2.jpg');
+    } catch (e) {
+      print(e);
+    }
   }
 
   Widget _publishSection(Color onBg) {
@@ -590,6 +613,22 @@ class ProductEditorPageState extends State<ProductEditorPage> {
     );
   }
 
+  Widget _atterbuteClip() {
+    String? selectedNodeId;
+
+    return Wrap(spacing: 8, runSpacing: 8, children: [
+      TreeNodeWidget(
+        node: sampleTreeData(),
+        selectedNodeId: selectedNodeId,
+        onNodeSelected: (nodeId) {
+          setState(() {
+            selectedNodeId = nodeId;
+          });
+        },
+      ),
+    ]);
+  }
+
   Widget _brandDropdown(Color bg, Color onBg) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -623,27 +662,71 @@ class ProductEditorPageState extends State<ProductEditorPage> {
   }
 }
 
-class AttributeChip extends StatelessWidget {
-  final String label;
-  final String value;
-
-  const AttributeChip({required this.label, required this.value, super.key});
+class _AddTile extends StatelessWidget {
+  final VoidCallback onTap;
+  const _AddTile({required this.onTap});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-      margin: const EdgeInsets.only(right: 8, bottom: 8),
-      decoration: BoxDecoration(
-        color: Colors.teal.withAlpha(100),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: Colors.teal, width: 1),
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(16),
+      child: DottedBorder(
+        radius: const Radius.circular(16),
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: const [
+              Icon(Icons.add_photo_alternate_outlined, size: 28),
+              SizedBox(height: 6),
+              Text('Add', style: TextStyle(fontSize: 12)),
+            ],
+          ),
+        ),
       ),
-      child: Text(
-        '$label: $value',
-        style: const TextStyle(
-            fontSize: 12, color: Colors.teal, fontWeight: FontWeight.w500),
-      ),
+    );
+  }
+}
+
+class _MediaTile extends StatelessWidget {
+  final VoidCallback onRemove;
+  final List<String> media;
+
+  const _MediaTile({required this.onRemove, required this.media});
+
+  @override
+  Widget build(BuildContext context) {
+    Iterator<String> m = media.iterator;
+    m.moveNext();
+    return Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            color: const Color(0xFFF3F4F7),
+            borderRadius: BorderRadius.circular(16),
+            image: DecorationImage(
+              image: AssetImage(
+                  media.isNotEmpty ? m.current : "assets/images/image3.jpg"),
+              fit: BoxFit.cover, // replace with your actual image
+            ),
+          ),
+        ),
+        Positioned(
+          top: 6,
+          right: 6,
+          child: InkWell(
+            onTap: onRemove,
+            child: Container(
+              padding: const EdgeInsets.all(4),
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(.55),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: const Icon(Icons.close, size: 16, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -736,137 +819,7 @@ class _FilePick extends StatelessWidget {
         },
         onSaved: (newValue) {
           imags.add(newValue!.single);
-
-          _saveImage();
         });
-  }
-}
-
-String? message;
-
-Future<void> _saveImage() async {
-  try {
-    // Get temporary directory
-    final Directory dir = await getApplicationDocumentsDirectory();
-
-    // Create an image name
-
-    FilePickerResult? result =
-        await FilePicker.platform.pickFiles(type: FileType.image);
-
-    //  if (result==null) {
-    //    "no";
-
-    //  }
-    PlatformFile platformFile = result!.files.first;
-
-    final String filenam =
-        'image_${DateTime.now().millisecond}.${platformFile.extension}';
-    var paths = '${dir.path}/$filenam';
-    // Save to filesystem
-    final File file = File(platformFile.path!);
-    final File newimage = await file.copy(paths);
-
-    message = 'Image saved to disk';
-  } catch (e) {
-    message = 'An error occurred while saving the image';
-  }
-}
-
-class _AddTile extends StatelessWidget {
-  final VoidCallback onTap;
-  const _AddTile({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: DottedBorder(
-        radius: Radius.circular(16),
-        child: Center(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.add_photo_alternate_outlined, size: 28),
-              SizedBox(height: 6),
-              Text('Add', style: TextStyle(fontSize: 12)),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-Future<void> pickFile() async {
-  FilePickerResult? result = await FilePicker.platform.pickFiles(
-    type: FileType.image, // Or .image, .video, .audio, .media
-    // allowedExtensions: ['jpeg', 'jpg', 'png'], // Specify allowed extensions for custom type
-    allowMultiple: false, // Set to true to allow multiple file selection
-  );
-
-  if (result != null) {
-    // Access the selected file(s)
-    PlatformFile file = result.files.first; // For single file selection
-    print('Selected file name: ${file.name}');
-    print('Selected file path: ${file.path}');
-    // Further processing of the file can be done here
-  } else {
-    // User canceled the picker
-    print('File picking canceled.');
-  }
-}
-
-class _MediaTile extends StatefulWidget {
-  final VoidCallback onRemove;
-  const _MediaTile({required this.onRemove});
-
-  @override
-  State<_MediaTile> createState() => _MediaTileState();
-}
-
-class _MediaTileState extends State<_MediaTile> {
-  String imageurl = "assets/images/iphone.png";
-  String? message;
-
-  Future<void> _saveImage(String imageUrl) async {
-    setState(() {
-      imageurl = imageUrl;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Stack(
-      children: [
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFFF3F4F7),
-            borderRadius: BorderRadius.circular(16),
-            image: DecorationImage(
-              image: AssetImage(media.first),
-              fit: BoxFit.cover, // replace with your actual image
-            ),
-          ),
-        ),
-        Positioned(
-          top: 6,
-          right: 6,
-          child: InkWell(
-            onTap: widget.onRemove,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: Colors.black.withOpacity(.55),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: const Icon(Icons.close, size: 16, color: Colors.white),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 }
 
