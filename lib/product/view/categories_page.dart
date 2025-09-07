@@ -1,4 +1,3 @@
-import 'package:dalell/container/container.dart';
 import 'package:dalell/oop/statedemo.dart';
 import 'package:flutter/material.dart';
 
@@ -8,6 +7,11 @@ class CategoriesPage extends StatefulWidget {
   @override
   State<CategoriesPage> createState() => _CategoriesPageState();
 }
+
+
+class _CategoriesPageState extends State<CategoriesPage> {
+  String searchCategoryName = "";
+  String searchPrice = "";
 
 List<CategorySection> categorySection = [
   CategorySection(
@@ -53,63 +57,89 @@ List<ProductInspirationCard> productInspirationCard = [
   ),
 ];
 
-
-
-
-class _CategoriesPageState extends State<CategoriesPage> {
   @override
   Widget build(BuildContext context) {
+    // Filter lists based on search values
+    List<CategorySection> filteredCategorySection = categorySection
+        .where((cat) => cat.title.toLowerCase().contains(searchCategoryName.toLowerCase()))
+        .toList();
+
+    List<ProductInspirationCard> filteredProductInspirationCard = productInspirationCard
+        .where((prod) => prod.price != null && prod.price!.contains(searchPrice))
+        .toList();
+
+    List<Widget> gridItems = [
+      const Text(
+        'For you',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      ...filteredCategorySection,
+      const Text(
+        'Product Inspirations',
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      ...filteredProductInspirationCard,
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Categories'),
-       
       ),
-      body: LayoutBuilder(builder: (BuildContext contex, BoxConstraints sizes) {
-        if (sizes.maxWidth > 600) {
-          return GridView.builder(
-            padding: EdgeInsets.all(8),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisSpacing: 8.0,
-                crossAxisSpacing: 8,
-                childAspectRatio: 1.0),
-            itemCount: categorySection.length,
-            itemBuilder: (context, index) {
-              return _body(index);
-            },
-          );
-        } else {
-          return ListView.builder(
-            padding: const EdgeInsets.all(16.0),
-            itemCount: categorySection.length,
-            itemBuilder: (context, index) {
-              return _body(index);
-            },
-          );
-        }
-      }),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            // Filter fields
+            TextFormField(
+              decoration: const InputDecoration(
+                labelText: 'Search Category Name',
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  searchCategoryName = value;
+                });
+              },
+            ),
+            // const SizedBox(height: 12),
+            // TextFormField(
+            //   decoration: const InputDecoration(
+            //     labelText: 'Search Product Price',
+            //     border: OutlineInputBorder(),
+            //   ),
+            //   onChanged: (value) {
+            //     setState(() {
+            //       searchPrice = value;
+            //     });
+            //   },
+            // ),
+            const SizedBox(height: 16),
+            // Responsive grid/list
+            Expanded(
+              child: LayoutBuilder(
+                builder: (context, sizes) {
+                  if (sizes.maxWidth > 600) {
+                    return GridView.builder(
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 3,
+                        childAspectRatio: 1.0,
+                      ),
+                      itemCount: gridItems.length,
+                      itemBuilder: (context, index) {
+                        return gridItems[index];
+                      },
+                    );
+                  } else {
+                    return ListView(
+                      children: gridItems,
+                    );
+                  }
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
     );
-  }
-
-  Widget _body(int index) {
-    return SizedBox(
-        child: Wrap(children: [
-      Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text(
-          'For you',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ),
-      categorySection[index],
-      Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Text(
-          'Get product inspiration',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-      ),
-     productInspirationCard[index]
-    ]));
   }
 }

@@ -2,16 +2,12 @@ import 'package:dalell/models/setting.dart';
 import 'package:dalell/order/views/delivery_list_view.dart';
 import 'package:dalell/order/views/order_list_view.dart';
 import 'package:dalell/product/view/product_list_view.dart';
-import 'package:dalell/views/user/bloc/auth_bloc.dart';
-import 'package:dalell/views/user/bloc/auth_state.dart';
 import 'package:dalell/views/user/login.dart';
 import 'package:flutter/material.dart';
 import 'package:dalell/app/drawer.dart';
 import 'package:dalell/app/pupupmenu.dart';
 import 'package:dalell/models/homepage.dart';
 import 'package:dalell/models/userprofile.dart';
-import 'package:dalell/views/user/sign_in_option_page.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});

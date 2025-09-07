@@ -1,7 +1,11 @@
-
-
-
+import 'package:dalell/cart/product_list_page.dart';
+import 'package:dalell/cart/trending_items.dart';
+import 'package:dalell/product/models/media.dart';
+import 'package:dalell/product/models/product.dart';
 import 'package:flutter/material.dart';
+
+import 'dart:convert';
+import 'package:http/http.dart';
 
 void main() {
   runApp(const MyApp());
@@ -17,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home: const ProductListingPage(),
+      home: const ProductListPage(),
     );
   }
 }
@@ -51,9 +55,21 @@ class ProductListingPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-              Image.asset('assets/images/image2.jpg',fit: BoxFit.cover,height: 100,),
-   Image.asset('assets/images/image2.jpg',fit: BoxFit.cover,height: 100,),
-   Image.asset('assets/images/image2.jpg',fit: BoxFit.cover,height: 100,),
+                Image.asset(
+                  'assets/images/image2.jpg',
+                  fit: BoxFit.cover,
+                  height: 100,
+                ),
+                Image.asset(
+                  'assets/images/image2.jpg',
+                  fit: BoxFit.cover,
+                  height: 100,
+                ),
+                Image.asset(
+                  'assets/images/image2.jpg',
+                  fit: BoxFit.cover,
+                  height: 100,
+                ),
               ],
             ),
             const SizedBox(height: 16),
@@ -67,7 +83,8 @@ class ProductListingPage extends StatelessWidget {
             const SizedBox(height: 16),
             Card(
               elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8)),
               child: Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Column(
@@ -75,15 +92,26 @@ class ProductListingPage extends StatelessWidget {
                   children: [
                     const Text(
                       'Chinese sold online',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      style:
+                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        Image.asset('assets/images/image2.jpg',height: 80,),
-                      Image.asset('assets/images/image2.jpg',height: 80,),
-                      Image.asset('assets/images/image2.jpg',fit: BoxFit.cover,height: 80,),
+                        Image.asset(
+                          'assets/images/image2.jpg',
+                          height: 80,
+                        ),
+                        Image.asset(
+                          'assets/images/image2.jpg',
+                          height: 80,
+                        ),
+                        Image.asset(
+                          'assets/images/image2.jpg',
+                          fit: BoxFit.cover,
+                          height: 80,
+                        ),
                       ],
                     ),
                   ],
@@ -103,7 +131,8 @@ class ProductListingPage extends StatelessWidget {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(icon: Icon(Icons.store), label: 'Store'),
           BottomNavigationBarItem(icon: Icon(Icons.group), label: 'Group'),
-          BottomNavigationBarItem(icon: Icon(Icons.shopping_cart), label: 'Cart'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.shopping_cart), label: 'Cart'),
         ],
         currentIndex: 0,
         onTap: (index) {},

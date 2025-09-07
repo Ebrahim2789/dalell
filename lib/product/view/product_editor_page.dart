@@ -891,3 +891,54 @@ class _DashedBorder extends RoundedRectangleBorder {
     }
   }
 }
+
+
+
+// void _saveProduct() async {
+//   if (_formKey.currentState!.validate()) {
+//     // 1. Collect form values
+//     final String name = nameCtrl.text.trim();
+//     final String desc = descCtrl.text.trim();
+//     final double price = double.tryParse(priceCtrl.text) ?? 0;
+//     final int? brandId = _brand;
+//     final List<int> selectedCategoryIds = _selectedCategories.toList();
+//     final List<String> mediaPaths = List<String>.from(_media);
+
+//     // 2. Build Product object
+//     final product = Product(
+//       id: widget.product?.id, // null for new, or existing id for update
+//       name: name,
+//       description: desc,
+//       price: price,
+//       brand: _brandss.firstWhere((b) => b.id == brandId, orElse: () => Brand(id: brandId, name: '', logoUrl: '')),
+//       category: _allCategoriess.firstWhere((c) => c.id == selectedCategoryIds.first, orElse: () => Category(id: selectedCategoryIds.first, name: '')),
+//       media: mediaPaths.map((path) => ProductMedia(url: path)).toList(),
+//       attributes: pa, // You can collect from UI if you allow editing
+//       options: [],    // Add options if you have them in your UI
+//     );
+
+//     // 3. Insert or update in database
+//     if (widget.product == null) {
+//       // Insert new product
+//       final int newId = await controller.insertProduct(product);
+//       // Insert media
+//       for (final path in mediaPaths) {
+//         await mediaRepo.insertMedia(ProductMedia(productid: newId, url: path, type: 'image'));
+//       }
+//       // Insert attributes/options if needed
+//       // ...
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('Product added!')),
+//       );
+//     } else {
+//       // Update existing product
+//       await controller.updateProduct(product);
+//       // Optionally update media/attributes
+//       ScaffoldMessenger.of(context).showSnackBar(
+//         const SnackBar(content: Text('Product updated!')),
+//       );
+//     }
+
+//     Navigator.pop(context, true); // Return to previous page
+//   }
+// }

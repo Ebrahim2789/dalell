@@ -12,15 +12,9 @@ class SignInPage extends StatefulWidget {
 class _SignInPageState extends State<SignInPage> {
   // late AuthBloc _authBloc; 
 
-  bool _isLoggedIn=false;
+
  
-  @override
-  Future<void> initState() async {
-  
-    super.initState();
-       bool loggedIn = await isLoggedIn();
-       _isLoggedIn=loggedIn;
-  }
+
 
   
   @override
@@ -109,9 +103,10 @@ class _SignInPageState extends State<SignInPage> {
                 ),
                 const SizedBox(height: 16),
                 ElevatedButton.icon(
-                  onPressed: () {
+                  onPressed: () async{
+                      bool loggedIn = await isLoggedIn();
 
-                    if(!_isLoggedIn){
+                    if(!loggedIn){
                     Navigator.pushReplacementNamed(context, RouteGenerator.loginScreen);
                     }
                   },

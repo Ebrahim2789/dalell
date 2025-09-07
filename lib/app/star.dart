@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 class Star extends StatelessWidget {
   final Color color;
@@ -59,17 +60,46 @@ class StarRating extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: List.generate(
-        value,
-        (_) => Padding(
-          padding: const EdgeInsets.all(2.0),
-          child: Star(
-            color: color,
-            size: starSize,
-          ),
-        ),
-      ),
-    );
+
+
+// Inside your build method:
+return RatingBarIndicator(
+  rating: 3.5, // your rating value here
+  itemBuilder: (context, index) => Icon(
+    Icons.star,
+    color: Colors.amber,
+  ),
+  itemCount: 5,
+  itemSize: 30.0,
+  direction: Axis.horizontal,
+);
+
+// return Row(
+//   children: List.generate(5, (index) {
+//     return Icon(
+//       index < rating ? Icons.star : Icons.star_border,
+//       color: Colors.amber,
+//     );
+//   }),
+// );
+//     return Row(
+//       children: List.generate(
+//         value,
+//         (_) => Padding(
+//           padding: const EdgeInsets.all(2.0),
+//           child: Star(
+//             color: color,
+//             size: starSize,
+//           ),
+//         ),
+//       ),
+//     );
   }
 }
+
+// List<String> items = ['A', 'B', 'C', 'D', 'E'];
+// int maxDisplay = 3;
+
+// Column(
+//   children: items.take(maxDisplay).map((item) => Text(item)).toList(),
+// )

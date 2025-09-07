@@ -43,12 +43,11 @@ class ProductListScreenState extends State<ProductListScreen> {
   final TextEditingController _mediaPathController = TextEditingController();
   final TextEditingController _searchController = TextEditingController();
 
-  final productRepo= ProductRepository();
-
+  final productRepo = ProductRepository();
   final prodmeda = ProductMediaRepository();
 
   String _searchQuery = '';
-// final  pro= staticdatas;
+
   @override
   void initState() {
     super.initState();
@@ -70,34 +69,25 @@ class ProductListScreenState extends State<ProductListScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Get screen size and orientation using MediaQuery
     final screenSize = MediaQuery.of(context).size;
-    final isPortrait =
-        MediaQuery.of(context).orientation == Orientation.portrait;
-    final padding = MediaQuery.of(context).padding;
-    final availableHeight = screenSize.height - padding.top - padding.bottom;
-
-    // Responsive dimensions
-    final searchBarWidth = screenSize.width * 0.9; // 90% of screen width
-    final fontSize = screenSize.width * 0.04; // Responsive font size
-    final iconSize = screenSize.width * 0.06; // Responsive icon size
-    final listTileHeight = availableHeight * 0.1; // Responsive ListTile height
+    final isWide = screenSize.width > 700;
+    final fontSize = screenSize.width * 0.04;
+    final iconSize = screenSize.width * 0.06;
 
     return Scaffold(
       appBar: AppBar(
         title: Text(
           'Products',
-          style: TextStyle(fontSize: fontSize * 1.2), // Responsive title size
+          style: TextStyle(fontSize: fontSize * 1.2),
         ),
       ),
       body: Column(
         children: [
           // Search Bar
-          Container(
-            width: searchBarWidth,
+          Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: screenSize.width * 0.05,
-              vertical: screenSize.height * 0.01,
+              horizontal: isWide ? 48.0 : 16.0,
+              vertical: 8.0,
             ),
             child: TextField(
               controller: _searchController,
@@ -112,11 +102,9 @@ class ProductListScreenState extends State<ProductListScreen> {
               style: TextStyle(fontSize: fontSize),
             ),
           ),
-          // Product List
+          // Product List/Grid
           Expanded(
             child: FutureBuilder<List<Product>>(
-
-              //  future:  pro,
               future: productRepo.getAllProductsWithMedia(),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
@@ -135,76 +123,59 @@ class ProductListScreenState extends State<ProductListScreen> {
                     ),
                   );
                 }
-                return ListView.builder(
-                  itemCount: products.length,
-                  itemBuilder: (context, index) {
-                    final product = products[index];
-                    return Container(
-                      height: listTileHeight,
-                      margin: EdgeInsets.symmetric(
-                        horizontal: screenSize.width * 0.05,
-                        vertical: screenSize.height * 0.005,
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          product.name,
-                          style: TextStyle(fontSize: fontSize),
-                        ),
-                        subtitle: Text(
-                          'Price: \$${product.price}',
-                          style: TextStyle(fontSize: fontSize * 0.9),
-                        ),
-                        trailing: IconButton(
-                          icon: Icon(Icons.delete, size: iconSize),
-                          onPressed: () async {
-                            await productRepo.deleteProduct(product.id!);
-                            setState(() {});
-                          },
-                        ),
+                // Use GridView for wide screens, ListView for narrow
+                if (isWide) {
+                  return GridView.builder(
+                    padding: EdgeInsets.symmetric(
+                        horizontal: isWide ? 48.0 : 16.0, vertical: 8.0),
+                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: screenSize.width ~/ 350, // ~350px per card
+                      childAspectRatio: 1.5,
+                      crossAxisSpacing: 16,
+                      mainAxisSpacing: 16,
+                    ),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return _ProductTile(
+                        product: product,
+                        fontSize: fontSize,
+                        iconSize: iconSize,
+                        onDelete: () async {
+                          await productRepo.deleteProduct(product.id!);
+                          setState(() {});
+                        },
                         onTap: () async {
                           final media =
                               await prodmeda.getMediaByProduct(product.id!);
-                          showDialog(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: Text(
-                                product.name,
-                                style: TextStyle(fontSize: fontSize * 1.1),
-                              ),
-                              content: Container(
-                                constraints: BoxConstraints(
-                                  maxWidth: screenSize.width * 0.8,
-                                  maxHeight: availableHeight * 0.5,
-                                ),
-                                child: SingleChildScrollView(
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: media
-                                        .map((m) => Text(
-                                              'Media: ${m.url}',
-                                              style:
-                                                  TextStyle(fontSize: fontSize),
-                                            ))
-                                        .toList(),
-                                  ),
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () => Navigator.pop(context),
-                                  child: Text(
-                                    'Close',
-                                    style: TextStyle(fontSize: fontSize),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          );
+                          _showProductDialog(context, product, media, fontSize, screenSize);
                         },
-                      ),
-                    );
-                  },
-                );
+                      );
+                    },
+                  );
+                } else {
+                  return ListView.builder(
+                    padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                    itemCount: products.length,
+                    itemBuilder: (context, index) {
+                      final product = products[index];
+                      return _ProductTile(
+                        product: product,
+                        fontSize: fontSize,
+                        iconSize: iconSize,
+                        onDelete: () async {
+                          await productRepo.deleteProduct(product.id!);
+                          setState(() {});
+                        },
+                        onTap: () async {
+                          final media =
+                              await prodmeda.getMediaByProduct(product.id!);
+                          _showProductDialog(context, product, media, fontSize, screenSize);
+                        },
+                      );
+                    },
+                  );
+                }
               },
             ),
           ),
@@ -213,6 +184,45 @@ class ProductListScreenState extends State<ProductListScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () => _showAddProductDialog(context),
         child: Icon(Icons.add, size: iconSize),
+      ),
+    );
+  }
+
+  void _showProductDialog(BuildContext context, Product product, List<Media> media, double fontSize, Size screenSize) {
+    final availableHeight = screenSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom;
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(
+          product.name,
+          style: TextStyle(fontSize: fontSize * 1.1),
+        ),
+        content: Container(
+          constraints: BoxConstraints(
+            maxWidth: screenSize.width * 0.8,
+            maxHeight: availableHeight * 0.5,
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: media
+                  .map((m) => Text(
+                        'Media: ${m.url}',
+                        style: TextStyle(fontSize: fontSize),
+                      ))
+                  .toList(),
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(
+              'Close',
+              style: TextStyle(fontSize: fontSize),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -268,7 +278,7 @@ class ProductListScreenState extends State<ProductListScreen> {
                 name: _nameController.text,
                 price: double.parse(_priceController.text),
                 description: '',
-                brand:Brand(name: 'name', logoUrl: 'logoUrl') ,
+                brand: Brand(name: 'name', logoUrl: 'logoUrl'),
                 category: Category(name: 'name'),
               );
               final productId = await productRepo.insertProduct(product);
@@ -294,15 +304,57 @@ class ProductListScreenState extends State<ProductListScreen> {
   }
 }
 
+// Responsive product tile for both grid and list
+class _ProductTile extends StatelessWidget {
+  final Product product;
+  final double fontSize;
+  final double iconSize;
+  final VoidCallback onDelete;
+  final VoidCallback onTap;
 
+  const _ProductTile({
+    required this.product,
+    required this.fontSize,
+    required this.iconSize,
+    required this.onDelete,
+    required this.onTap,
+  });
 
-
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
+      child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        title: Text(
+          product.name,
+          style: TextStyle(fontSize: fontSize),
+        ),
+        subtitle: Text(
+          'Price: \$${product.price}',
+          style: TextStyle(fontSize: fontSize * 0.9),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.delete, size: iconSize),
+          onPressed: onDelete,
+        ),
+        onTap: onTap,
+      ),
+    );
+  }
+}
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = screenWidth > 700;
+    final cardWidth = isWide ? 200.0 : 130.0;
+    final fontSize = isWide ? 20.0 : 16.0;
+    final sectionTitleSize = isWide ? 22.0 : 18.0;
+
     return Scaffold(
       appBar: AppBar(
         title: TextField(
@@ -310,7 +362,7 @@ class HomePage extends StatelessWidget {
             hintText: 'What are you looking for...',
             focusedBorder: focusedOutlineInputBorder,
             enabledBorder: outlineInputBorder,
-            hintStyle: TextStyle(color: Colors.grey),
+            hintStyle: const TextStyle(color: Colors.grey),
           ),
         ),
         actions: [
@@ -321,159 +373,178 @@ class HomePage extends StatelessWidget {
         ],
       ),
       body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(vertical: 8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Text('Products',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text('Manufacturers',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                  Text('Regional supplies',
-                      style:
-                          TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
-                ],
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: isWide ? 32.0 : 8.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: EdgeInsets.symmetric(vertical: isWide ? 16.0 : 8.0),
+                child: Wrap(
+                  alignment: WrapAlignment.spaceAround,
+                  spacing: 16,
+                  runSpacing: 8,
+                  children: const [
+                    Text('Products',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text('Manufacturers',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                    Text('Regional supplies',
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16)),
+                  ],
+                ),
               ),
-            ),
-            const Divider(),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'For your business',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              const Divider(),
+              Padding(
+                padding: EdgeInsets.all(isWide ? 24.0 : 16.0),
+                child: Text(
+                  'For your business',
+                  style: TextStyle(
+                      fontSize: sectionTitleSize, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/categories');
-                  },
-                  child: Container(
-                    width: 110,
-                    height: 60,
-                    decoration: BoxDecoration(
+              // Responsive business action buttons
+              Padding(
+                padding: EdgeInsets.only(bottom: isWide ? 24.0 : 16.0),
+                child: Wrap(
+                  alignment: WrapAlignment.spaceEvenly,
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    _BusinessActionButton(
+                      label: 'All categories',
                       color: Colors.orange,
-                      borderRadius: BorderRadius.circular(8),
+                      onTap: () => Navigator.pushNamed(context, '/categories'),
+                      width: cardWidth,
                     ),
-                    child: const Center(
-                      child: Text(
-                        'All categories',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
+                    _BusinessActionButton(
+                      label: 'Request for Quotation',
+                      color: Colors.blue[800]!,
+                      onTap: () => Navigator.pushNamed(context, '/rfq'),
+                      width: cardWidth,
                     ),
-                  ),
+               
+                  ],
                 ),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/rfq');
-                  },
-                  child: Container(
-                    width: 110,
-                    height: 60,
-                    decoration: BoxDecoration(
-                      color: Colors.blue[800],
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: const Center(
-                      child: Text(
-                        'Request for Quotation',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  ),
+              ),
+              const SizedBox(height: 16),
+              ListTile(
+                title: Text(
+                  'Top deals',
+                  style: TextStyle(
+                      fontSize: sectionTitleSize, fontWeight: FontWeight.bold),
                 ),
-                Container(
-                  width: 110,
-                  height: 60,
-                  decoration: BoxDecoration(
-                    color: Colors.green[800],
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Source in Europe',
-                      style: TextStyle(
-                          color: Colors.white, fontWeight: FontWeight.bold),
-                      textAlign: TextAlign.center,
+                trailing: const Icon(Icons.arrow_forward),
+              ),
+              SizedBox(
+                height: isWide ? 260 : 200,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    ProductCard(
+                      imagePlaceholder: 'assets/images/image1.jpg',
+                      price: 'ETB 630.60-\n1,975.55',
                     ),
-                  ),
+                    ProductCard(
+                      imagePlaceholder: 'assets/images/image6.jpg',
+                      price: 'ETB 442.53-\n742.81',
+                    ),
+                    ProductCard(
+                      imagePlaceholder: 'assets/images/imagex1.jpg',
+                      price: 'ETB 2,607.7\n2,844.79',
+                    ),
+                  ]
+                      .map((card) => SizedBox(
+                            width: cardWidth,
+                            child: card,
+                          ))
+                      .toList(),
                 ),
-              ],
-            ),
-            const SizedBox(height: 16),
-            const ListTile(
-              title: Text(
-                'Top deals',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
               ),
-              trailing: Icon(Icons.arrow_forward),
-            ),
-            SizedBox(
-              height: 200,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: const [
-                  ProductCard(
-                    imagePlaceholder: 'assets/images/image1.jpg',
-                    price: 'ETB 630.60-\n1,975.55',
-                  ),
-                  ProductCard(
-                    imagePlaceholder: 'assets/images/image6.jpg',
-                    price: 'ETB 442.53-\n742.81',
-                  ),
-                  ProductCard(
-                    imagePlaceholder: 'assets/images/imagex1.jpg',
-                    price: 'ETB 2,607.7\n2,844.79',
-                  ),
-                ],
+              const SizedBox(height: 16),
+              ListTile(
+                title: Text(
+                  'New arrivals',
+                  style: TextStyle(
+                      fontSize: sectionTitleSize, fontWeight: FontWeight.bold),
+                ),
+                trailing: const Icon(Icons.arrow_forward),
               ),
-            ),
-            const SizedBox(height: 16),
-            const ListTile(
-              title: Text(
-                'New arrivals',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              SizedBox(
+                height: isWide ? 260 : 200,
+                child: ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: [
+                    ProductCard(
+                      imagePlaceholder: 'assets/images/image21.jpg',
+                      price: 'ETB 14.23-44.26',
+                    ),
+                    ProductCard(
+                      imagePlaceholder: 'assets/images/image5.jpg',
+                      price: 'ETB 3,081.86-\n5,016.21',
+                    ),
+                    ProductCard(
+                      imagePlaceholder: 'assets/images/image3.jpg',
+                      price: 'ETB 7.91-11.4',
+                    ),
+                  ]
+                      .map((card) => SizedBox(
+                            width: cardWidth,
+                            child: card,
+                          ))
+                      .toList(),
+                ),
               ),
-              trailing: Icon(Icons.arrow_forward),
-            ),
-            SizedBox(
-              height: 200,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: const [
-                  ProductCard(
-                    imagePlaceholder: 'assets/images/image21.jpg',
-                    price: 'ETB 14.23-44.26',
-                  ),
-                  ProductCard(
-                    imagePlaceholder: 'assets/images/image5.jpg',
-                    price: 'ETB 3,081.86-\n5,016.21',
-                  ),
-                  ProductCard(
-                    imagePlaceholder: 'assets/images/image3.jpg',
-                    price: 'ETB 7.91-11.4',
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 }
+
+// Responsive business action button widget
+class _BusinessActionButton extends StatelessWidget {
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  final double width;
+
+  const _BusinessActionButton({
+    required this.label,
+    required this.color,
+    required this.onTap,
+    required this.width,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        width: width,
+        height: 60,
+        margin: const EdgeInsets.symmetric(vertical: 4),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: const TextStyle(
+                color: Colors.white, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 
 class UnstopProfilePage extends StatelessWidget {
   const UnstopProfilePage({super.key});
@@ -985,191 +1056,5 @@ class ProductCard extends StatelessWidget {
         ),
       );
     });
-  }
-}
-
-class TipsPage extends StatelessWidget {
-  const TipsPage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Tips'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Text('Following', style: TextStyle(fontSize: 16)),
-                  Text('Recommended',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Hot topics',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            SizedBox(
-              height: 150,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: const [
-                  TopicCard(
-                    imagePlaceholder: 'Selected global new products',
-                    hashtag: '#Selected global new products',
-                    views: '779',
-                  ),
-                  TopicCard(
-                    imagePlaceholder: 'Find your high-quality products',
-                    hashtag: '#Find your high-quality products',
-                    views: '8.6k',
-                  ),
-                  TopicCard(
-                    imagePlaceholder: 'Unique novelties',
-                    hashtag: '#Unique novelties',
-                    views: '25.4k',
-                  ),
-                ],
-              ),
-            ),
-            const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Text(
-                'Get inspired',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-            ),
-            const VideoCard(
-              thumbnailPlaceholder: 'Shoes',
-              duration: '00:25',
-              title: 'Fashionable appearance walk on your style#shoes #soft',
-              views: '1.7k',
-            ),
-            const VideoCard(
-              thumbnailPlaceholder: 'What is Alibaba.com?',
-              duration: '01:49',
-              title: 'The official guidebook to Alibaba.com',
-              views: '4.3M',
-            ),
-            const VideoCard(
-              thumbnailPlaceholder: 'Body slimming',
-              duration: '00:40',
-              title: '#emsculpt #bodyshape #Body SlimmingPro',
-              views: '57.7k',
-            ),
-            const VideoCard(
-              thumbnailPlaceholder: 'Muslim dress',
-              duration: '00:18',
-              title: 'Muslim dress show',
-              views: '',
-            ),
-            const VideoCard(
-              thumbnailPlaceholder: 'Earphones',
-              duration: '01:00',
-              title: 'Pro2 gen earphones',
-              views: '',
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class TopicCard extends StatelessWidget {
-  final String imagePlaceholder;
-  final String hashtag;
-  final String views;
-
-  const TopicCard({
-    super.key,
-    required this.imagePlaceholder,
-    required this.hashtag,
-    required this.views,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        width: 150,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.grey[200],
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Expanded(
-              child: Center(child: Text(imagePlaceholder)),
-            ),
-            Text(hashtag, style: const TextStyle(fontSize: 12)),
-            Text(views, style: const TextStyle(fontSize: 12)),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class VideoCard extends StatelessWidget {
-  final String thumbnailPlaceholder;
-  final String duration;
-  final String title;
-  final String views;
-
-  const VideoCard({
-    super.key,
-    required this.thumbnailPlaceholder,
-    required this.duration,
-    required this.title,
-    required this.views,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: Container(
-        height: 200,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(8),
-          color: Colors.grey[300],
-        ),
-        child: Stack(
-          children: [
-            Center(child: Text(thumbnailPlaceholder)),
-            Positioned(
-              bottom: 8,
-              left: 8,
-              child:
-                  Text(duration, style: const TextStyle(color: Colors.white)),
-            ),
-            Positioned(
-              bottom: 8,
-              right: 8,
-              child: Text(views, style: const TextStyle(color: Colors.white)),
-            ),
-            Positioned(
-              bottom: 30,
-              left: 8,
-              child: Text(title, style: const TextStyle(color: Colors.white)),
-            ),
-          ],
-        ),
-      ),
-    );
   }
 }

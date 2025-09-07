@@ -1,5 +1,6 @@
 import 'package:dalell/home.dart';
 import 'package:dalell/marchent_page.dart';
+import 'package:dalell/models/tipsPage.dart';
 import 'package:dalell/product/view/categories_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dalell/coustomer_page.dart';
@@ -119,7 +120,7 @@ class RouteGenerator {
 
       case tipsPage:
         return MaterialPageRoute(
-          builder: (_) => const TipsPage(),
+          builder: (_) => const TipsPages(),
         );
       case rFQPage:
         return MaterialPageRoute(

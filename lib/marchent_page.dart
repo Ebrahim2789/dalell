@@ -1,13 +1,14 @@
 import 'package:dalell/app/drawer.dart';
 import 'package:dalell/app/pupupmenu.dart';
+import 'package:dalell/cart/product_list_page.dart';
+
 import 'package:dalell/home.dart';
+import 'package:dalell/models/tipsPage.dart';
 import 'package:dalell/product/view/categories_page.dart';
-import 'package:dalell/views/user/bloc/auth_bloc.dart';
-import 'package:dalell/views/user/bloc/auth_state.dart';
+import 'package:dalell/product/view/product_listing_page.dart';
 import 'package:dalell/views/user/login.dart';
 import 'package:dalell/views/user/sign_in_option_page.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MarchentPage extends StatefulWidget {
   const MarchentPage({super.key});
@@ -36,11 +37,14 @@ class _MarchentPage extends State<MarchentPage>
     listpag
       ..add(const HomePage())
       //  ..add(const Dashboard())
+
+      ..add(const TipsPages())
       ..add(const CategoriesPage())
-      ..add(const TipsPage())
+      ..add(const ProductListPage())
       ..add(const RFQPage())
-      ..add(const UnstopProfilePage())
-      ..add(const SignInPage());
+
+      // ..add(const UnstopProfilePage())
+      ..add(const TipsPages());
     _currentPage = const HomePage();
   }
 
@@ -75,31 +79,28 @@ class _MarchentPage extends State<MarchentPage>
         ],
       ),
       drawer: const LeftDrawerWidget(),
-      body:
-      _currentPage,
-      
-      
+      body: _currentPage,
+
       //  BlocBuilder<AuthBloc, AuthState>(
       //   builder: (context, state) {
       //     if (state is AuthAuthenticated) {
       //       _currentPage=const HomePage();
-            
-            //  Center(
-            //   child: Column(
-            //     mainAxisAlignment: MainAxisAlignment.center,
-            //     children: [
-            //       Text('Welcome, ${state.user.email}!'),
-            //       Text('Role: ${state.user.role}'),
-            //     ],
-            //   ),
-            // );
-        //   }
-        //   else{
-        //       _currentPage=const SignInPage();
-        //   }
-        //   return _currentPage;
-        // },
-        
+
+      //  Center(
+      //   child: Column(
+      //     mainAxisAlignment: MainAxisAlignment.center,
+      //     children: [
+      //       Text('Welcome, ${state.user.email}!'),
+      //       Text('Role: ${state.user.role}'),
+      //     ],
+      //   ),
+      // );
+      //   }
+      //   else{
+      //       _currentPage=const SignInPage();
+      //   }
+      //   return _currentPage;
+      // },
 
       // ),
       bottomNavigationBar: BottomNavigationBar(

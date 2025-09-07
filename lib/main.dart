@@ -1,5 +1,4 @@
 import 'package:dalell/views/user/bloc/auth_event.dart';
-import 'package:dalell/views/user/bloc/auth_state.dart';
 import 'package:flutter/material.dart';
 import 'package:dalell/routes/routes.dart';
 import 'package:provider/provider.dart';
@@ -38,9 +37,7 @@ void initState() {
             create: (context) => AuthBloc()..add(CheckAuthStatus()),
             child: MaterialApp(
               onGenerateTitle: (context) => "Random App",
-              
               initialRoute: RouteGenerator.homePages,
-
 // 2.
               onGenerateRoute: RouteGenerator.generateRoute, // 3.
               debugShowCheckedModeBanner: false,
