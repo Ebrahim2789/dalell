@@ -2,13 +2,13 @@
 
 class Media {
   int? id;
-  int productid;
+  int? productid;
   final String url;
   final String type; // e.g., 'image', 'video'
 
   Media(
       {this.id,
-      required this.productid,
+       this.productid,
       required this.url,
       required this.type});
   Map<String, dynamic> toMap() {

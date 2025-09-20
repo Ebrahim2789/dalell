@@ -2,22 +2,22 @@
 
 class Order  {
   
-  final int? id;
+   int? id;
   final int? productId;
   final int quantity;
   final double total;
   final String status;
   final String createdAt;
-  final String addressId; // new field
+   String? addressId; // new field
 
   Order({
-    required this.id,
+     this.id,
     required this.productId,
     required this.quantity,
     required this.total,
     required this.status,
     required this.createdAt,
-    required this.addressId,
+     this.addressId,
   });
 
   Map<String, dynamic> toMap() => {
@@ -45,14 +45,14 @@ class Order  {
 
 // models/delivery.dart
 class Delivery {
-  final int? id;
+   int? id;
   final int? orderId;
   final String address;
   final String status; // pending, shipped, delivered
   final String? deliveredAt;
 
   Delivery({
-    required this.id,
+     this.id,
     required this.orderId,
     required this.address,
     required this.status,

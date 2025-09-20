@@ -2,9 +2,13 @@
 
 import 'package:dalell/product/models/brand.dart';
 import 'package:dalell/product/models/database_helper.dart';
+import 'package:dalell/product/repositories/generic_repository.dart';
 
 class BrandRepository {
   final dbHelper = DatabaseHelper.instance;
+
+    final brandGenirc = GenericRepository<Brand>(
+      tableName: 'brands', fromMap: Brand.fromMap);
 
   Future<int> insertBrand(Brand brand) async {
     final db = await dbHelper.database;

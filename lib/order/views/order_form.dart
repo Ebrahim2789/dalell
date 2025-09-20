@@ -62,50 +62,54 @@ class _OrderFormState extends State<OrderForm> {
       appBar: AppBar(title: Text("New Order")),
       body: Padding(
         padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            children: [
-              TextFormField(
-                controller: _productIdController,
-                decoration: InputDecoration(labelText: "Product ID"),
-                keyboardType: TextInputType.number,
-                validator: (v) => v!.isEmpty ? "Enter product ID" : null,
-              ),
-              TextFormField(
-                controller: _quantityController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: "Quantity"),
-                validator: (v) => v!.isEmpty ? "Enter quantity" : null,
-              ),
-              TextFormField(
-                controller: _totalController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(labelText: "Total"),
-                validator: (v) => v!.isEmpty ? "Enter total" : null,
-              ),
-              DropdownButtonFormField<String>(
-                initialValue: selectedAddressId,
-                items: addresses.map((a) {
-                  return DropdownMenuItem(
-                    value: a.city,
-                    child: Text("${a.customerName} - ${a.city}"),
-                  );
-                }).toList(),
-                onChanged: (v) => setState(() => selectedAddressId = v),
-                decoration: InputDecoration(labelText: "Select Address"),
-                validator: (v) =>
-                    v == null ? "Please select an address" : null,
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _saveOrder,
-                child: Text("Save Order"),
-              ),
-            ],
-          ),
-        ),
+        child: newMethod(),
       ),
     );
+  }
+
+  Form newMethod() {
+    return Form(
+        key: _formKey,
+        child: ListView(
+          children: [
+            TextFormField(
+              controller: _productIdController,
+              decoration: InputDecoration(labelText: "Product ID"),
+              keyboardType: TextInputType.number,
+              validator: (v) => v!.isEmpty ? "Enter product ID" : null,
+            ),
+            TextFormField(
+              controller: _quantityController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: "Quantity"),
+              validator: (v) => v!.isEmpty ? "Enter quantity" : null,
+            ),
+            TextFormField(
+              controller: _totalController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(labelText: "Total"),
+              validator: (v) => v!.isEmpty ? "Enter total" : null,
+            ),
+            DropdownButtonFormField<String>(
+              initialValue: selectedAddressId,
+              items: addresses.map((a) {
+                return DropdownMenuItem(
+                  value: a.city,
+                  child: Text("${a.customerName} - ${a.city}"),
+                );
+              }).toList(),
+              onChanged: (v) => setState(() => selectedAddressId = v),
+              decoration: InputDecoration(labelText: "Select Address"),
+              validator: (v) =>
+                  v == null ? "Please select an address" : null,
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _saveOrder,
+              child: Text("Save Order"),
+            ),
+          ],
+        ),
+      );
   }
 }

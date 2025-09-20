@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-
-
 void main() {
   runApp(const MyApp());
 }
@@ -68,8 +65,6 @@ class _TreeViewScreenState extends State<TreeViewScreen> {
       ),
     );
   }
-
-
 }
 
 // Widget to render a tree node
@@ -99,7 +94,7 @@ class TreeNodeWidget extends StatelessWidget {
           color: isSelected ? Colors.blue : Colors.grey[600],
         ),
         title: Text(
-          node.label,
+          node.label!,
           style: TextStyle(
             color: isSelected ? Colors.blue[800] : Colors.black87,
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
@@ -133,50 +128,75 @@ class TreeNodeWidget extends StatelessWidget {
   }
 }
 
-
-  // Sample tree data
-  TreeNode sampleTreeData() {
-    return TreeNode(
-      id: 'root',
-      label: 'Categories',
-      children: [
-        TreeNode(
-          id: 'cat1',
-          label: 'Electronics',
-          children: [
-            TreeNode(id: 'cat1-1', label: 'Phones'),
-            TreeNode(id: 'cat1-2', label: 'Laptops'),
-            TreeNode(
-              id: 'cat1-3',
-              label: 'Accessories',
-              children: [
-                TreeNode(id: 'cat1-3-1', label: 'Chargers'),
-                TreeNode(id: 'cat1-3-2', label: 'Headphones'),
-              ],
-            ),
-          ],
-        ),
-        TreeNode(
-          id: 'cat2',
-          label: 'Clothing',
-          children: [
-            TreeNode(id: 'cat2-1', label: 'Men'),
-            TreeNode(id: 'cat2-2', label: 'Women'),
-          ],
-        ),
-      ],
-    );
+// Sample tree data
+TreeNode sampleTreeData() {
+  return TreeNode(
+    id: 'root',
+    label: 'Attribute',
+    children: [
+      TreeNode(
+        id: '1',
+        label: 'Color',
+        children: [
+          TreeNode(id: '1-1', label: 'Black'),
+          TreeNode(id: '1-2', label: 'White'),
+        ],
+      ),
+      TreeNode(
+        id: '2',
+        label: 'Storage',
+        children: [
+          TreeNode(id: '2-1', label: '128GB'),
+          TreeNode(id: '2-2', label: '256GB'),
+        ],
+      ),
+      TreeNode(
+        id: '3',
+        label: 'Battery',
+        children: [
+          TreeNode(id: '3-1', label: '5000Amh'),
+          TreeNode(id: '3-2', label: '7000Ahm'),
+        ],
+      ),
+    ],
+  );
+}
+void addChild(TreeNode parent, TreeNode child){
+  child.parent=parent;
+  parent.children.add(child);
+}
+void selectedPranet(TreeNode child){
+  if (child.parent!=null) {
+    print("prant of ${child.label} is${child.parent!.label}");
+    
   }
+  else{
+     print("${child.label} has no pranet");
+  }
+}
 
+TreeNode? findParent(TreeNode root,TreeNode child){
+  for (var i in root.children) {
+    if (i==child) {
+return root;      
+    }
+    var result=findParent(i, child);
+    if(result!=null) return result;
+    
+  }
+  return null;
+}
 // Model for a tree node
 class TreeNode {
   final String id;
-  final String label;
+  final String? label;
+  TreeNode? parent;
   final List<TreeNode> children;
 
   TreeNode({
     required this.id,
-    required this.label,
+     this.label,
+    this.parent,
     this.children = const [],
   });
 }

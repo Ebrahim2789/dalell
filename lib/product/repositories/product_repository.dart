@@ -33,7 +33,7 @@ class ProductRepository {
       );
 
         List<Media> mediaList = mediaResult.map((e) => Media.fromMap(e)).toList();
-      products.add(Product.fromMap(prodMap, media: mediaList));
+      products.add(Product.fromMap(prodMap, media: mediaList, ));
 
 
     }

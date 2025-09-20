@@ -1,5 +1,9 @@
+import 'package:dalell/config/theme/themedata.dart';
+
 import 'package:flutter/material.dart';
 import 'package:dalell/routes/routes.dart';
+import 'package:flutter_localization/flutter_localization.dart';
+import 'package:provider/provider.dart';
 
 class TabbarWidget extends StatefulWidget {
   const TabbarWidget({super.key, required String title});
@@ -32,8 +36,20 @@ class MenuListTileWidget extends StatefulWidget {
 }
 
 class _MenuListTileWidgetState extends State<MenuListTileWidget> {
+
+
+    final FlutterLocalization localization = FlutterLocalization.instance;
+
+  @override
+  void initState() {
+    super.initState();
+
+  }
+
   @override
   Widget build(BuildContext context) {
+    final themeNotifeier = Provider.of<ThemeNotifier>(context);
+    
     return Column(
       children: [
         ListTile(
@@ -73,6 +89,23 @@ class _MenuListTileWidgetState extends State<MenuListTileWidget> {
             Navigator.pop(context),
           },
         ),
+        Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: Row(children: [
+             themeNotifeier.isDarkMode? const Text('Dark Mode'):const Text('Light Mode'),
+              Switch(
+                value: themeNotifeier.isDarkMode,
+                onChanged: (_) {
+                  themeNotifeier.toggleTheme();
+                },
+              )
+            ])),
+                ElevatedButton(
+                    child: const Text('English'),
+                    onPressed: () {
+                      localization.translate('en');
+                    },
+                  ),
       ],
     );
   }
@@ -88,13 +121,13 @@ class LeftDrawerWidget extends StatefulWidget {
 class _LeftDrawerWidgetState extends State<LeftDrawerWidget> {
   @override
   Widget build(BuildContext context) {
+    final themeNotifeier = Provider.of<ThemeNotifier>(context);
     return Drawer(
-      backgroundColor: Colors.grey,
+      backgroundColor:  themeNotifeier.isDarkMode ?Colors.black:Colors.white,
       child: ListView(
         padding: EdgeInsets.all(10),
         children: const [
           UserAccountsDrawerHeader(
-            
             // currentAccountPictureSize:   Size.fromRadius(30.0),
             // otherAccountsPicturesSize: Size.square(40.0),
             // currentAccountPicture: CircleAvatar(
@@ -103,22 +136,23 @@ class _LeftDrawerWidgetState extends State<LeftDrawerWidget> {
             //     child: Icon(
             //       Icons.person,
             //     )),
-       
-      decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: Colors.orangeAccent,
-                image: DecorationImage(image:AssetImage ("assets/images/user.png"))
+
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.orangeAccent,
+                image: DecorationImage(
+                    image: AssetImage("assets/images/user.png"))),
+            //  margin: EdgeInsets.only(top: 10),
+            accountName: Text(
+              'Abre',
+              style: TextStyle(),
             ),
-                //  margin: EdgeInsets.only(top: 10),
-            accountName: Text('Abre',style: TextStyle(),),
             accountEmail: Text('abre@gmail'),
 
             //   otherAccountsPictures: [
 
             // Image(image: AssetImage("assets/images/user.png"))
             //   ],
-      
-            
           ),
           Divider(),
           MenuListTileWidget(),

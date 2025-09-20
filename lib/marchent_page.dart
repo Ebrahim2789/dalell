@@ -5,9 +5,7 @@ import 'package:dalell/cart/product_list_page.dart';
 import 'package:dalell/home.dart';
 import 'package:dalell/models/tipsPage.dart';
 import 'package:dalell/product/view/categories_page.dart';
-import 'package:dalell/product/view/product_listing_page.dart';
 import 'package:dalell/views/user/login.dart';
-import 'package:dalell/views/user/sign_in_option_page.dart';
 import 'package:flutter/material.dart';
 
 class MarchentPage extends StatefulWidget {
@@ -43,8 +41,8 @@ class _MarchentPage extends State<MarchentPage>
       ..add(const ProductListPage())
       ..add(const RFQPage())
 
-      // ..add(const UnstopProfilePage())
-      ..add(const TipsPages());
+      ..add(const UnstopProfilePage());
+      // ..add(const TipsPages());
     _currentPage = const HomePage();
   }
 
@@ -64,12 +62,7 @@ class _MarchentPage extends State<MarchentPage>
                         : _currentIndex == 4
                             ? 'Order'
                             : 'Me'),
-        //                TextField(
-        // decoration: InputDecoration(
-        //   hintText: 'What are you looking for...',
-        //   border: InputBorder.none,
-        //   hintStyle: TextStyle(color: Colors.grey),
-        // ),
+ 
         actions: [
           IconButton(
             onPressed: () {},
@@ -80,29 +73,6 @@ class _MarchentPage extends State<MarchentPage>
       ),
       drawer: const LeftDrawerWidget(),
       body: _currentPage,
-
-      //  BlocBuilder<AuthBloc, AuthState>(
-      //   builder: (context, state) {
-      //     if (state is AuthAuthenticated) {
-      //       _currentPage=const HomePage();
-
-      //  Center(
-      //   child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     children: [
-      //       Text('Welcome, ${state.user.email}!'),
-      //       Text('Role: ${state.user.role}'),
-      //     ],
-      //   ),
-      // );
-      //   }
-      //   else{
-      //       _currentPage=const SignInPage();
-      //   }
-      //   return _currentPage;
-      // },
-
-      // ),
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
         onTap: (index) => _changePage(index),

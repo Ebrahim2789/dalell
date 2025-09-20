@@ -33,6 +33,10 @@ dependencies:
   equatable: ^2.0.5
   flutter_bloc: 
   flutter_rating_bar: ^4.0.1
+  intl: 
+  intl_translation: 
+  flutter_localization: ^0.3.3
+
 
   # google_fonts: ^6.3.0
 

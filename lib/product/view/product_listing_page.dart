@@ -1,11 +1,6 @@
 import 'package:dalell/cart/product_list_page.dart';
-import 'package:dalell/cart/trending_items.dart';
-import 'package:dalell/product/models/media.dart';
-import 'package:dalell/product/models/product.dart';
 import 'package:flutter/material.dart';
 
-import 'dart:convert';
-import 'package:http/http.dart';
 
 void main() {
   runApp(const MyApp());

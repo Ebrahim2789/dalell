@@ -6,7 +6,6 @@ import 'package:dalell/product/repositories/generic_repository.dart';
 import 'package:dalell/product/repositories/product_ateribute_repository.dart';
 import 'package:dalell/product/repositories/product_media_repository.dart';
 import 'package:dalell/product/repositories/product_repository.dart';
-import 'package:sqflite/sqflite.dart';
 import '../models/product.dart';
 import 'package:dalell/product/models/brand.dart';
 import 'package:dalell/product/models/category.dart';
@@ -33,18 +32,12 @@ class ProductController {
 
   List<Product> get Products => _Products;
 
-  // GenericRepository<Brand>(
-  //     tableName: 'brandes', fromMap: Brand.fromMap);
-
-  // Future<Result<Brand?>> fetchProducts(int id) async {
-
-  //   return brandRepo.getById(id);
-  // }
 
   Future<int> insertProduct(Product product) async {
     final db = await dbHelper.database;
 
     final brandRepo = BrandRepository();
+    brandRepo.brandGenirc.getByName('LTA');
 
 // Insert a brand
     List<Brand> brand = await brandRepo.getAllBrands();
@@ -57,15 +50,29 @@ class ProductController {
       categorRepo.inite();
     }
 
-    product.media.addAll(product.media.toList());
-    product.attributes.addAll(product.attributes.toList());
+    // print(product.attributes);
+
+    // product.media.addAll(product.media.toList());
+    // product.attributes.addAll(product.attributes.toList());
+    int pid = await db.rawInsert(
+        "INSERT INTO products ('id', 'name', 'description','brandId','categoryId', 'price') values (?, ?, ?, ?, ?,?)",
+        [
+          product.id,
+          product.name,
+          product.description,
+          product.brand!.id,
+          product.category!.id,
+          product.price
+        ]);
 
     // product.brandId=brandId;
-    int productId = await db.insert(
-      'products',
-      product.toMap(),
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
+    int productId = pid;
+    //
+    // await db.insert(
+    //   'products',
+    //   product.toMap(),
+    //   conflictAlgorithm: ConflictAlgorithm.replace,
+    // );
 
     final pr = await productRepo.getAllProductsWithMedia();
 
@@ -92,39 +99,33 @@ class ProductController {
   }
 
   Future<List<Product>> getAllProducts() async {
-    // final list =await productRepoG.getAll();
-
     // Fetch product with media
     List<Product> products = await productRepo.getAllProductsWithMedia();
     for (var p in products) {
       // print("Product: ${p.name}, Price: ${p.price}");
       List<Media> list = await mediaRepo.getMediaByProduct(p.id!);
 
-      for (var m in list ) {
+      for (var m in list) {
         // print("   Media is : ${m.url} (${m.type})");
-        p.media.add(m);        
+        p.media.add(m);
       }
       List<ProductAttribute> attributList =
           await attributRepo.getAProductAteribute(p.id!);
 
       for (var atterMap in attributList) {
-
         List<ProductOption> optionList =
             await optionRepo.getProductOptionByProduct(atterMap.id!);
-        // attributList
-        //     .add(ProductAttribute.fromMap(atterMap.toMap(), options: optionList));
 
-    p.attributes.add(ProductAttribute.fromMap(
-          atterMap.toMap(), options: optionList));
+        p.attributes.add(
+            ProductAttribute.fromMap(atterMap.toMap(), options: optionList));
 
+        Category category = await categorRepo.getCategoryById(p.categoryId!);
+        p.category = category;
+
+        var brand = await brandRepo.getBrandById(p.brandId!);
+
+        p.brand = brand;
       }
-Category category= await categorRepo.getCategoryById(1);
-p.category=category;
-
-Brand brand= await brandRepo.getBrandById(2);
-p.brand=brand;
-
-  
     }
 
     return products;

@@ -122,9 +122,9 @@ class HomeScreen extends StatelessWidget {
 //   ```dart
 //   if (state is AuthAuthenticated) {
 //     if (state.user.role == 'admin') {
-//       Navigator.pushReplacementNamed(context, '/admin_dashboard');
+//       Navigator.popAndPushNamed(context, '/admin_dashboard');
 //     } else {
-//       Navigator.pushReplacementNamed(context, '/user_home');
+//       Navigator.popAndPushNamed(context, '/user_home');
 //     }
 //   }
 //   ```

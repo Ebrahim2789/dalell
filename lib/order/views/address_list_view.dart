@@ -41,8 +41,8 @@ class _AddressListViewState extends State<AddressListView> {
 
   void _addAddress() async {
     final address = Address(
-      id: 1,
-      customerName: "John Doe",
+    
+      customerName: "kalid Doe",
       phone: "+251911000000",
       city: "Dire Dawa",
       street: "Kezira Street 12",
@@ -111,7 +111,7 @@ class _AddressListViewState extends State<AddressListView> {
                           icon: const Icon(Icons.swap_horiz),
                           label: const Text("Add Address"),
                           onPressed: () {
-                            _addAddress;
+                            _addAddress();
                           },
                         ),
                       ),

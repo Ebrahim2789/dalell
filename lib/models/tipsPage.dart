@@ -1,9 +1,40 @@
 
-
+import 'package:dalell/product/controller/product_controller.dart';
 import 'package:flutter/material.dart';
 
-class TipsPages extends StatelessWidget {
+import '../product/models/product.dart';
+
+class TipsPages extends StatefulWidget {
   const TipsPages({super.key});
+
+  @override
+  State<TipsPages> createState() => _TipsPagesState();
+}
+
+class _TipsPagesState extends State<TipsPages> {
+
+ final ProductController controller = ProductController();
+  List<Product> products = [];
+
+  void _loadProducts() async {
+    final data = await controller.getAllProducts();
+
+    if (data.isEmpty) {
+      await controller.insertProduct(StaticData.products.first);
+    }
+
+    setState(() {
+      products = data;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -14,65 +45,88 @@ class TipsPages extends StatelessWidget {
     final horizontalPadding = isWide ? 32.0 : 16.0;
     final fontSize = isWide ? 20.0 : 16.0;
     final sectionTitleSize = isWide ? 22.0 : 18.0;
+       final topics = [];
+          final videos = [];
 
-    final topics = [
-      TopicCard(
-        imagePlaceholder: 'Selected global new products',
-        hashtag: '#Selected global new products',
-        views: '779',
-        width: topicCardWidth,
-      ),
-      TopicCard(
-        imagePlaceholder: 'Find your high-quality products',
-        hashtag: '#Find your high-quality products',
-        views: '8.6k',
-        width: topicCardWidth,
-      ),
-      TopicCard(
-        imagePlaceholder: 'Unique novelties',
-        hashtag: '#Unique novelties',
-        views: '25.4k',
-        width: topicCardWidth,
-      ),
-    ];
 
-    final videos = [
-      VideoCard(
-        thumbnailPlaceholder: 'Shoes',
+    for (var p in products) {
+
+       topics.add(  TopicCard(
+        imagePlaceholder: p.media.map((value)=>value.url).first,
+        hashtag: '#${p.name}',
+        views: '${p.price}',
+        width: topicCardWidth,
+      ));
+
+        videos.add(    VideoCard(
+        thumbnailPlaceholder: p.media.map((value)=>value.url).first,
         duration: '00:25',
-        title: 'Fashionable appearance walk on your style#shoes #soft',
-        views: '1.7k',
+        title: '#${p.name}',
+        views: '${p.price}k',
         height: videoCardHeight,
-      ),
-      VideoCard(
-        thumbnailPlaceholder: 'What is Alibaba.com?',
-        duration: '01:49',
-        title: 'The official guidebook to Alibaba.com',
-        views: '4.3M',
-        height: videoCardHeight,
-      ),
-      VideoCard(
-        thumbnailPlaceholder: 'Body slimming',
-        duration: '00:40',
-        title: '#emsculpt #bodyshape #Body SlimmingPro',
-        views: '57.7k',
-        height: videoCardHeight,
-      ),
-      VideoCard(
-        thumbnailPlaceholder: 'Muslim dress',
-        duration: '00:18',
-        title: 'Muslim dress show',
-        views: '',
-        height: videoCardHeight,
-      ),
-      VideoCard(
-        thumbnailPlaceholder: 'Earphones',
-        duration: '01:00',
-        title: 'Pro2 gen earphones',
-        views: '',
-        height: videoCardHeight,
-      ),
-    ];
+      ));
+
+
+    }
+
+    // final topics = [
+    //   TopicCard(
+    //     imagePlaceholder: 'Selected global new products',
+    //     hashtag: '#Selected global new products',
+    //     views: '779',
+    //     width: topicCardWidth,
+    //   ),
+    //   TopicCard(
+    //     imagePlaceholder: 'Find your high-quality products',
+    //     hashtag: '#Find your high-quality products',
+    //     views: '8.6k',
+    //     width: topicCardWidth,
+    //   ),
+    //   TopicCard(
+    //     imagePlaceholder: 'Unique novelties',
+    //     hashtag: '#Unique novelties',
+    //     views: '25.4k',
+    //     width: topicCardWidth,
+    //   ),
+    // ];
+
+    // final videos = [
+    //   VideoCard(
+    //     thumbnailPlaceholder: 'Shoes',
+    //     duration: '00:25',
+    //     title: 'Fashionable appearance walk on your style#shoes #soft',
+    //     views: '1.7k',
+    //     height: videoCardHeight,
+    //   ),
+    //   VideoCard(
+    //     thumbnailPlaceholder: 'What is Alibaba.com?',
+    //     duration: '01:49',
+    //     title: 'The official guidebook to Alibaba.com',
+    //     views: '4.3M',
+    //     height: videoCardHeight,
+    //   ),
+    //   VideoCard(
+    //     thumbnailPlaceholder: 'Body slimming',
+    //     duration: '00:40',
+    //     title: '#emsculpt #bodyshape #Body SlimmingPro',
+    //     views: '57.7k',
+    //     height: videoCardHeight,
+    //   ),
+    //   VideoCard(
+    //     thumbnailPlaceholder: 'Muslim dress',
+    //     duration: '00:18',
+    //     title: 'Muslim dress show',
+    //     views: '',
+    //     height: videoCardHeight,
+    //   ),
+    //   VideoCard(
+    //     thumbnailPlaceholder: 'Earphones',
+    //     duration: '01:00',
+    //     title: 'Pro2 gen earphones',
+    //     views: '',
+    //     height: videoCardHeight,
+    //   ),
+    // ];
 
     return Scaffold(
       appBar: AppBar(
@@ -137,7 +191,7 @@ class TipsPages extends StatelessWidget {
                       itemBuilder: (context, index) => videos[index],
                     )
                   : Column(
-                      children: videos,
+                      children: [...videos,]
                     ),
             ],
           ),
@@ -177,7 +231,7 @@ class TopicCard extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Expanded(
-              child: Center(child: Text(imagePlaceholder)),
+              child: Center(child: Image.asset(imagePlaceholder)),
             ),
             Text(hashtag, style: const TextStyle(fontSize: 12)),
             Text(views, style: const TextStyle(fontSize: 12)),
@@ -216,7 +270,8 @@ class VideoCard extends StatelessWidget {
         ),
         child: Stack(
           children: [
-            Center(child: Text(thumbnailPlaceholder)),
+               Center(child: Image.asset(thumbnailPlaceholder)),
+      
             Positioned(
               bottom: 8,
               left: 8,

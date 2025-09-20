@@ -179,8 +179,6 @@ class _PopupMenuButtonWidgetState extends State<PopupMenuButtonWidget> {
 
   PopupMenuButton<Menu> popUpMenuButtonForHomes() {
 
-
-
     return PopupMenuButton<Menu>(itemBuilder: (context) {
           return  [
             PopupMenuItem<Menu>(
@@ -190,8 +188,7 @@ class _PopupMenuButtonWidgetState extends State<PopupMenuButtonWidget> {
     
               Navigator.popAndPushNamed(context,RouteGenerator.marchentPages);
                 
-              
-            
+    
             }, 
               child: const ListTile(
                   title: Text('Log out'),
@@ -268,8 +265,9 @@ class _PopupMenuButtonWidgetState extends State<PopupMenuButtonWidget> {
             PopupMenuItem<Menu>(
               value: Menu.logout,
                    onTap:(){
-              Navigator.of(context).pushNamed(  RouteGenerator.marchentPages,);
+                     context.read<AuthBloc>().add(LogoutRequested());
             }, 
+
               child: const ListTile(
                 leading: Icon(Icons.note_add_outlined),
                 title: Text('NewNote'),

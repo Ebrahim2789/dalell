@@ -1,18 +1,14 @@
-import 'dart:io';
-
 import 'package:dalell/oop/tree.dart';
 import 'package:dalell/product/controller/product_controller.dart';
+import 'package:dalell/product/models/media.dart';
 import 'package:dalell/product/models/product.dart';
 import 'package:dalell/product/models/product_attribute.dart';
 import 'package:dalell/product/repositories/brand_repository.dart';
 import 'package:dalell/product/repositories/category_repository.dart';
 import 'package:dalell/product/repositories/product_ateribute_repository.dart';
 import 'package:dalell/product/repositories/product_media_repository.dart';
-
 import 'package:flutter/material.dart';
 import 'package:form_builder_file_picker/form_builder_file_picker.dart';
-import 'package:path_provider/path_provider.dart';
-
 import 'package:dalell/product/models/brand.dart';
 import 'package:dalell/product/models/category.dart';
 
@@ -55,7 +51,7 @@ class ProductEditorPageState extends State<ProductEditorPage> {
     'New'
   ];
   final Set<int> _selectedCategories = {1, 3};
-
+  final Set<int> _selectedAttr = {1};
   final List<String> _brands = const [
     'LTA',
     'Noura',
@@ -66,43 +62,29 @@ class ProductEditorPageState extends State<ProductEditorPage> {
   int? _brand = 1;
   final List<Brand> _brandss = [];
   final List<Category> _allCategoriess = [];
+  final List<String> _selectedOptions = [];
+  final List<String> _selectedAtterbute = [];
 
-  List<ProductAttribute> pa = [
-    ProductAttribute(
-      name: "Color",
-      options: [
-        ProductOption(value: "Black"),
-        ProductOption(value: "White"),
-      ],
-    ),
-    ProductAttribute(
-      name: "Storage",
-      options: [
-        ProductOption(value: "128GB"),
-        ProductOption(value: "256GB"),
-      ],
-    ),
-  ];
+  String? selectedNodeId;
+  List<TreeNode> sampleTreeDatas = sampleTreeData().children;
+
+  List<ProductAttribute> _productAttribute = [];
 
   late List<Product> pro = [];
+  
   void _loadAllProductFilds() async {
-    // pro.first.name != "goods";
-    // pro.last.name != "goods";
+    sampleTreeDatas.map((op) {
+      // _selectedAtterbute.add(op.label!);
 
-    // late Iterator<dynamic> data = pa.iterator;
-    // int a = 0;
-
-    // while (data.moveNext()) {
-    //   pro.first.attributes[a].options != data.current;
-    //   a++;
-    // }
+      return op.children.map((value) {
+        // _selectedOptions.add(value.label!);
+        return value;
+      }).toList();
+    }).toList();
 
 // Insert a brand
     List<Brand> brand = await brandRepo.getAllBrands();
     if (brand.isNotEmpty) {
-      // for (var b in brand) {
-      //   print(b.name);
-      // }
       setState(
         () => _brandss.addAll(brand),
       );
@@ -117,10 +99,6 @@ class ProductEditorPageState extends State<ProductEditorPage> {
 
     List<Category> category = await categorRepo.getAllCategory();
     if (category.isNotEmpty) {
-      // for (var c in category) {
-      //   print(c.name);
-      // }
-
       setState(
         () => _allCategoriess.addAll(category),
       );
@@ -141,42 +119,8 @@ class ProductEditorPageState extends State<ProductEditorPage> {
         text: widget.product != null ? widget.product!.price.toString() : "");
   }
 
-  void _saveProduct() async {
-    if (_formKey.currentState!.validate()) {
-      final product = Product(
-        id: widget.product?.id ?? 1,
-        name: nameCtrl.text,
-        description: descCtrl.text,
-        price: double.tryParse(priceCtrl.text) ?? 0,
-        brand: Brand(
-            id: _brand, name: 'SoundMax', logoUrl: 'assets/images/image2.jpg'),
-        category: Category(id: _selectedCategories.first, name: ''),
-        media: [
-          
-        ],
-        attributes: [
-          
-        ],
-        options: [],
-      );
-
-      if (widget.product == null) {
-        print(product.brand);
-        print(product.category);
-        // await controller.insertProduct(product);
-      } else {
-        await controller.updateProduct(product);
-      }
-
-      print(imags.first);
-
-      // Navigator.pop(context, true); // return to list
-    }
-  }
-
   final List<String> medias = [];
-  final List<String> _media =
-      []; // store paths/urls/base64 after you hook it up
+  final List<String> _media = [];
 
   bool _published = true;
   DateTime? _scheduleDate;
@@ -197,10 +141,61 @@ class ProductEditorPageState extends State<ProductEditorPage> {
     if (picked != null) setState(() => _scheduleDate = picked);
   }
 
-  void _save() {
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Saved (UI only). Hook up your logic!')),
-    );
+  void _save() async {
+    if (_formKey.currentState!.validate()) {
+      // 1. Collect form values
+      final String name = nameCtrl.text.trim();
+      final String desc = descCtrl.text.trim();
+      final double price = double.tryParse(priceCtrl.text) ?? 0;
+      final int? brandId = _brand;
+      final List<int> selectedCategoryIds = _selectedCategories.toList();
+      final List<String> mediaPaths = List<String>.from(_media);
+      for (var name in _selectedAtterbute) {
+        for (var val in _selectedOptions) {
+          _productAttribute.addAll([
+            ProductAttribute(name: name, options: [ProductOption(value: val)])
+          ]);
+        }
+      }
+
+      // 2. Build Product object
+      final product = Product(
+        id: widget.product?.id, // null for new, or existing id for update
+        name: name,
+        description: desc,
+        price: price,
+        brandId:brandId,
+        categoryId: _selectedCategories.first,
+        media: mediaPaths.map((path) => Media(url: path, type: '')).toList(),
+        attributes:
+            _productAttribute, // You can collect from UI if you allow editing
+        options: [], // Add options if you have them in your UI
+      );
+
+      Category category =
+          await categorRepo.getCategoryById(selectedCategoryIds.first);
+      product.category = category;
+
+      Brand brand = await brandRepo.getBrandById(brandId!);
+      product.brand = brand;
+
+      // 3. Insert or update in database
+      if (widget.product == null) {
+        // // Insert new product
+         await controller.insertProduct(product);
+
+
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Product added!')),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Product updated!')),
+        );
+      }
+
+      Navigator.pop(context, true); // Return to previous page
+    }
   }
 
   @override
@@ -286,10 +281,6 @@ class ProductEditorPageState extends State<ProductEditorPage> {
                         title: 'Products Media',
                         subtitle: 'Images & videos that represent this product',
                         child: _mediaGrid(),
-
-                        // _FilePick(),
-
-                        // _mediaGrid(),
                       ),
                       const SizedBox(height: 14),
                       _SectionCard(
@@ -301,7 +292,9 @@ class ProductEditorPageState extends State<ProductEditorPage> {
                       _SectionCard(
                         title: 'Products Option',
                         subtitle: 'Control visibility & schedule',
-                        child: _atterbuteClip(),
+                        child: _atterbutsChips(sampleTreeDatas),
+                        //  _attChips(),
+                        // _atterbuteClip(),
                       ),
                     ],
                   ),
@@ -329,7 +322,7 @@ class ProductEditorPageState extends State<ProductEditorPage> {
             Expanded(
               child: OutlinedButton.icon(
                 onPressed: () {
-                  // Optional: preview action
+                  _save();
                 },
                 icon: const Icon(Icons.visibility_outlined),
                 label: const Text('Preview'),
@@ -344,7 +337,7 @@ class ProductEditorPageState extends State<ProductEditorPage> {
             const SizedBox(width: 12),
             Expanded(
               child: ElevatedButton.icon(
-                onPressed: _saveProduct,
+                onPressed: _save,
                 icon: const Icon(Icons.save_outlined),
                 label: const Text('Save'),
                 style: ElevatedButton.styleFrom(
@@ -408,29 +401,6 @@ class ProductEditorPageState extends State<ProductEditorPage> {
                 validator: (v) => v!.isEmpty ? "Enter product Price" : null,
               ),
               SizedBox(height: 10),
-              // TextFormField(
-              //   decoration: InputDecoration(
-              //     labelText: 'Wholesale Price',
-              //     prefixIcon: Icon(Icons.attach_money),
-              //   ),
-              //   keyboardType: TextInputType.number,
-              // ),
-              // SizedBox(height: 16),
-              // TextFormField(
-              //   decoration: InputDecoration(
-              //     labelText: 'Retail Price',
-              //     prefixIcon: Icon(Icons.attach_money),
-              //   ),
-              //   keyboardType: TextInputType.number,
-              // ),
-              // SizedBox(height: 16),
-              // TextFormField(
-              //   decoration: InputDecoration(
-              //     labelText: 'Stock',
-              //     prefixIcon: Icon(Icons.inventory),
-              //   ),
-              //   keyboardType: TextInputType.number,
-              // ),
             ],
           ),
         ),
@@ -514,16 +484,15 @@ class ProductEditorPageState extends State<ProductEditorPage> {
 
   Future<void> _saveImage() async {
     try {
-      // Get temporary directory
-      final Directory dir = await getApplicationDocumentsDirectory();
-      FilePickerResult? result =
-          await FilePicker.platform.pickFiles(type: FileType.image);
-      PlatformFile platformFile = result!.files.first;
-      final String filenam =
-          'images${DateTime.now().millisecond}.${platformFile.extension}';
-      var paths = '${dir.path}/$filenam';
+      // final Directory dir = await getApplicationDocumentsDirectory();
+      // FilePickerResult? result =
+      // await FilePicker.platform.pickFiles(type: FileType.image);
+      // PlatformFile platformFile = result!.files.first;
+      // final String filenam =
+      //     'images${DateTime.now().millisecond}.${platformFile.extension}';
+      // // var paths = '${dir.path}/$filenam';
       // Save to filesystem
-      final File file = File(platformFile.path!);
+      // final File file = File(platformFile.path!);
       // final File newimage = await file.copy(paths);
 
       // print("imagepath =${newimage.uri}");
@@ -613,20 +582,69 @@ class ProductEditorPageState extends State<ProductEditorPage> {
     );
   }
 
-  Widget _atterbuteClip() {
-    String? selectedNodeId;
+  Widget _atterbutsChips(List<TreeNode> node) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: node.map((c) {
+        final selected = _selectedAtterbute.contains(c.label);
+        return Wrap(
+          children: [
+            CheckboxListTile(
+              title: Text(c.label!, style: const TextStyle(fontSize: 16)),
+              value: _selectedAtterbute.contains(c.label),
+              selected: selected,
+              onChanged: (_) {
+                setState(() {
+                  if (selected) {
+                    _selectedAtterbute.remove(c.label);
+                  } else {
+                    _selectedAtterbute.add(c.label!);
+                    print(_selectedAtterbute);
+                  }
+                });
+              },
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24)),
+            ),
+            if (node.isNotEmpty && selected) _attChips(c.children),
+          ],
+        );
+      }).toList(),
+    );
+  }
 
-    return Wrap(spacing: 8, runSpacing: 8, children: [
-      TreeNodeWidget(
-        node: sampleTreeData(),
-        selectedNodeId: selectedNodeId,
-        onNodeSelected: (nodeId) {
-          setState(() {
-            selectedNodeId = nodeId;
-          });
-        },
-      ),
-    ]);
+  Widget _attChips(List<TreeNode> node) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: node.map((c) {
+        final selected = _selectedOptions.contains(c.label);
+
+        return ChoiceChip(
+          label: Text(c.label!),
+          selected: selected,
+          onSelected: (_) {
+            setState(() {
+              if (selected) {
+                _selectedOptions.remove(c.label);
+              } else {
+                _selectedOptions.add(c.label!);
+                print(_selectedOptions);
+              }
+            });
+          },
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
+          selectedColor: const Color(0xFFFFE0B2),
+          labelStyle: TextStyle(
+            color: selected ? const Color(0xFFBF360C) : Colors.black87,
+            fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+          ),
+          backgroundColor: const Color(0xFFF3F4F7),
+        );
+      }).toList(),
+    );
   }
 
   Widget _brandDropdown(Color bg, Color onBg) {
@@ -891,54 +909,3 @@ class _DashedBorder extends RoundedRectangleBorder {
     }
   }
 }
-
-
-
-// void _saveProduct() async {
-//   if (_formKey.currentState!.validate()) {
-//     // 1. Collect form values
-//     final String name = nameCtrl.text.trim();
-//     final String desc = descCtrl.text.trim();
-//     final double price = double.tryParse(priceCtrl.text) ?? 0;
-//     final int? brandId = _brand;
-//     final List<int> selectedCategoryIds = _selectedCategories.toList();
-//     final List<String> mediaPaths = List<String>.from(_media);
-
-//     // 2. Build Product object
-//     final product = Product(
-//       id: widget.product?.id, // null for new, or existing id for update
-//       name: name,
-//       description: desc,
-//       price: price,
-//       brand: _brandss.firstWhere((b) => b.id == brandId, orElse: () => Brand(id: brandId, name: '', logoUrl: '')),
-//       category: _allCategoriess.firstWhere((c) => c.id == selectedCategoryIds.first, orElse: () => Category(id: selectedCategoryIds.first, name: '')),
-//       media: mediaPaths.map((path) => ProductMedia(url: path)).toList(),
-//       attributes: pa, // You can collect from UI if you allow editing
-//       options: [],    // Add options if you have them in your UI
-//     );
-
-//     // 3. Insert or update in database
-//     if (widget.product == null) {
-//       // Insert new product
-//       final int newId = await controller.insertProduct(product);
-//       // Insert media
-//       for (final path in mediaPaths) {
-//         await mediaRepo.insertMedia(ProductMedia(productid: newId, url: path, type: 'image'));
-//       }
-//       // Insert attributes/options if needed
-//       // ...
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Product added!')),
-//       );
-//     } else {
-//       // Update existing product
-//       await controller.updateProduct(product);
-//       // Optionally update media/attributes
-//       ScaffoldMessenger.of(context).showSnackBar(
-//         const SnackBar(content: Text('Product updated!')),
-//       );
-//     }
-
-//     Navigator.pop(context, true); // Return to previous page
-//   }
-// }

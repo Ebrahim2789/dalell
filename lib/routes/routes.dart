@@ -1,6 +1,13 @@
+import 'package:dalell/cart/product_list_page.dart';
+import 'package:dalell/config/theme/app_theme.dart';
+import 'package:dalell/config/theme/shared_preferences_service.dart';
+import 'package:dalell/config/theme/theme_repository.dart';
 import 'package:dalell/home.dart';
 import 'package:dalell/marchent_page.dart';
 import 'package:dalell/models/tipsPage.dart';
+import 'package:dalell/order/views/address_list_view.dart';
+import 'package:dalell/order/views/delivery_list_view.dart';
+import 'package:dalell/order/views/order_list_view.dart';
 import 'package:dalell/product/view/categories_page.dart';
 import 'package:flutter/material.dart';
 import 'package:dalell/coustomer_page.dart';
@@ -18,7 +25,8 @@ import 'package:dalell/views/user/rest_password.dart';
 
 class RouteGenerator {
   // 2.
-  static const String homePages = '/';
+    static const String root = '/';
+  static const String homePages = '/CustomerPage';
   static const String marchentPages = '/MarchentPage';
 
   static const String randomPage = '/random';
@@ -40,27 +48,65 @@ class RouteGenerator {
 
   static const String productEditorPage = '/ProductEditorPage';
   static const String productOrderPage = '/ProductOrderPage';
+
+  static const String orderPage = '/orderPage';
+  static const String addressPage = '/addressPage';
+  static const String deliverisPage = '/deliverisPage';
+  static const String cartPage = '/cartPage';
+  static const String appTheme = '/AppTheme';
+
 // 3.
   RouteGenerator._();
 
-
   static Route<dynamic> generateRoute(RouteSettings settings) {
-
-
-    
 //4.
     switch (settings.name) {
+            case root:
+// .5
+        return MaterialPageRoute(
+          builder: (_) => const  SignInPage(),
+
+        
+        );
       case homePages:
 // .5
         return MaterialPageRoute(
-          builder: (_) => const ProfileScreen(),
+          builder: (_) => 
+
+           ProfileScreen(themeRepository: ThemeRepository(
+            SharedPreferencesService()
+          ),),
         );
-   case marchentPages:
+      case marchentPages:
 // .5
         return MaterialPageRoute(
           builder: (_) => const MarchentPage(),
         );
-        
+      case appTheme:
+// .5
+        return MaterialPageRoute(
+          builder: (_) => AppTheme(
+            themeRepository: ThemeRepository(SharedPreferencesService()),
+          ),
+        );
+      case orderPage:
+        return MaterialPageRoute(
+          builder: (_) => const OrderListView(),
+        );
+
+      case deliverisPage:
+        return MaterialPageRoute(
+          builder: (_) => const DeliveryListView(),
+        );
+      case addressPage:
+        return MaterialPageRoute(
+          builder: (_) => const AddressListView(),
+        );
+      case cartPage:
+        return MaterialPageRoute(
+          builder: (_) => const ProductListPage(),
+        );
+
       case randomPage:
         return MaterialPageRoute(
           builder: (_) => const ResponsiveUi(),
@@ -104,11 +150,11 @@ class RouteGenerator {
             title: '',
           ),
         );
-      case SignInPage:
+      case signInPage:
         return MaterialPageRoute(
           builder: (_) => const SignInPage(),
         );
-      case loginScreen:
+      case login:
         return MaterialPageRoute(
           builder: (_) => const LoginScreen(),
         );

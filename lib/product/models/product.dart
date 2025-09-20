@@ -13,19 +13,28 @@ class Product extends Basemodel {
   final String name;
   final String description;
   final double price;
-  Brand? brand;
+   Brand? brand;
+   int? brandId;
+
   Category? category;
+ int? categoryId;
   final List<Media> media;
   final List<ProductAttribute> attributes;
   final List<ProductOption> options;
+
+
+
 
   Product({
     this.id,
     required this.name,
     required this.description,
     required this.price,
-    brand,
+    this.brandId,
+     brand,
+ 
     category,
+    this.categoryId,
     List<Media>? media,
    List<ProductAttribute>? attributes,
     List<ProductOption>? options,
@@ -40,8 +49,8 @@ class Product extends Basemodel {
       'id': id,
       'name': name,
       'description': description,
-      'brand': brand,
-      'category': category,
+      'brandId': brandId,
+      'categoryId': categoryId,
       'price': price,
       // 'media': media,
       // 'attributes': attributes,
@@ -51,7 +60,7 @@ class Product extends Basemodel {
 
   factory Product.fromMap(
     Map<dynamic, dynamic> map, {
-Brand? brand,
+ Brand? brand,
 Category? category,
    List<Media>? media,
    List<ProductAttribute>? attributes,
@@ -61,8 +70,8 @@ Category? category,
         id: map['id'],
         name: map['name'],
         description: map['description'],
-        brand: brand,
-        category:category,
+        brandId: map['brandId'],
+        categoryId:map['categoryId'],
         price: map['price'],
         media: media,
         attributes: attributes,

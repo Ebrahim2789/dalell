@@ -1,6 +1,8 @@
 import 'dart:async';
-import 'package:dalell/data/services/shared_preferences_service.dart';
+
 import 'package:dalell/utils/result.dart';
+
+import 'shared_preferences_service.dart';
 
 /// Repository for theme settings.
 /// The repository is the source of truth for the theme settings.

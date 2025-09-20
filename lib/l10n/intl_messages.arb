@@ -1,0 +1,15 @@
+{
+  "@@last_modified": "2025-09-09T17:45:16.138018"
+"title": "Demo",
+"@title": {
+"description": "Title for the Demo application",
+"type": "text",
+"placeholders": {}
+},
+"message": "Hello World",
+"@message": {
+"description": "Message for the Demo application",
+"type": "text",
+"placeholders": {}
+}
+}

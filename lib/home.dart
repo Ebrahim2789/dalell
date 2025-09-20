@@ -1,4 +1,5 @@
 import 'package:dalell/config/theme/themedata.dart';
+import 'package:dalell/product/controller/product_controller.dart';
 import 'package:dalell/product/models/brand.dart';
 import 'package:dalell/product/models/category.dart';
 import 'package:dalell/product/models/media.dart';
@@ -7,10 +8,6 @@ import 'package:dalell/product/repositories/product_media_repository.dart';
 import 'package:dalell/product/repositories/product_repository.dart';
 import 'package:dalell/config/theme/inputdecoration.dart';
 import 'package:flutter/material.dart';
-
-
-
-
 
 void main() {
   runApp(const ProductApp());
@@ -28,7 +25,6 @@ class ProductApp extends StatelessWidget {
     );
   }
 }
-
 
 class ProductListScreen extends StatefulWidget {
   const ProductListScreen({super.key});
@@ -129,7 +125,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                     padding: EdgeInsets.symmetric(
                         horizontal: isWide ? 48.0 : 16.0, vertical: 8.0),
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: screenSize.width ~/ 350, // ~350px per card
+                      crossAxisCount:
+                          screenSize.width ~/ 350, // ~350px per card
                       childAspectRatio: 1.5,
                       crossAxisSpacing: 16,
                       mainAxisSpacing: 16,
@@ -148,7 +145,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                         onTap: () async {
                           final media =
                               await prodmeda.getMediaByProduct(product.id!);
-                          _showProductDialog(context, product, media, fontSize, screenSize);
+                          _showProductDialog(
+                              context, product, media, fontSize, screenSize);
                         },
                       );
                     },
@@ -170,7 +168,8 @@ class ProductListScreenState extends State<ProductListScreen> {
                         onTap: () async {
                           final media =
                               await prodmeda.getMediaByProduct(product.id!);
-                          _showProductDialog(context, product, media, fontSize, screenSize);
+                          _showProductDialog(
+                              context, product, media, fontSize, screenSize);
                         },
                       );
                     },
@@ -188,8 +187,11 @@ class ProductListScreenState extends State<ProductListScreen> {
     );
   }
 
-  void _showProductDialog(BuildContext context, Product product, List<Media> media, double fontSize, Size screenSize) {
-    final availableHeight = screenSize.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom;
+  void _showProductDialog(BuildContext context, Product product,
+      List<Media> media, double fontSize, Size screenSize) {
+    final availableHeight = screenSize.height -
+        MediaQuery.of(context).padding.top -
+        MediaQuery.of(context).padding.bottom;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -325,7 +327,8 @@ class _ProductTile extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
       child: ListTile(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
         title: Text(
           product.name,
           style: TextStyle(fontSize: fontSize),
@@ -344,8 +347,34 @@ class _ProductTile extends StatelessWidget {
   }
 }
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
   const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  final ProductController controller = ProductController();
+  List<Product> products = [];
+
+  void _loadProducts() async {
+    final data = await controller.getAllProducts();
+
+    if (data.isEmpty) {
+      await controller.insertProduct(StaticData.products.first);
+    }
+
+    setState(() {
+      products = data;
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -354,6 +383,14 @@ class HomePage extends StatelessWidget {
     final cardWidth = isWide ? 200.0 : 130.0;
     final fontSize = isWide ? 20.0 : 16.0;
     final sectionTitleSize = isWide ? 22.0 : 18.0;
+    List<ProductCard> pc = [];
+
+    for (var p in products) {
+      pc.add(ProductCard(
+        imagePlaceholder: p.media.map((va) => va.url).first,
+        price: p.price.toString(),
+      ));
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -426,7 +463,6 @@ class HomePage extends StatelessWidget {
                       onTap: () => Navigator.pushNamed(context, '/rfq'),
                       width: cardWidth,
                     ),
-               
                   ],
                 ),
               ),
@@ -444,18 +480,7 @@ class HomePage extends StatelessWidget {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   children: [
-                    ProductCard(
-                      imagePlaceholder: 'assets/images/image1.jpg',
-                      price: 'ETB 630.60-\n1,975.55',
-                    ),
-                    ProductCard(
-                      imagePlaceholder: 'assets/images/image6.jpg',
-                      price: 'ETB 442.53-\n742.81',
-                    ),
-                    ProductCard(
-                      imagePlaceholder: 'assets/images/imagex1.jpg',
-                      price: 'ETB 2,607.7\n2,844.79',
-                    ),
+                    ...pc.take(3),
                   ]
                       .map((card) => SizedBox(
                             width: cardWidth,
@@ -477,20 +502,7 @@ class HomePage extends StatelessWidget {
                 height: isWide ? 260 : 200,
                 child: ListView(
                   scrollDirection: Axis.horizontal,
-                  children: [
-                    ProductCard(
-                      imagePlaceholder: 'assets/images/image21.jpg',
-                      price: 'ETB 14.23-44.26',
-                    ),
-                    ProductCard(
-                      imagePlaceholder: 'assets/images/image5.jpg',
-                      price: 'ETB 3,081.86-\n5,016.21',
-                    ),
-                    ProductCard(
-                      imagePlaceholder: 'assets/images/image3.jpg',
-                      price: 'ETB 7.91-11.4',
-                    ),
-                  ]
+                  children: [...pc.skip(3)]
                       .map((card) => SizedBox(
                             width: cardWidth,
                             child: card,
@@ -544,7 +556,6 @@ class _BusinessActionButton extends StatelessWidget {
     );
   }
 }
-
 
 class UnstopProfilePage extends StatelessWidget {
   const UnstopProfilePage({super.key});
@@ -671,13 +682,49 @@ class UnstopProfilePage extends StatelessWidget {
   }
 }
 
-
-
-class RFQPage extends StatelessWidget {
+class RFQPage extends StatefulWidget {
   const RFQPage({super.key});
 
   @override
+  State<RFQPage> createState() => _RFQPageState();
+}
+
+class _RFQPageState extends State<RFQPage> {
+  final ProductController controller = ProductController();
+
+  List<Product> products = [];
+  List<Category> categories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadProducts();
+  }
+
+  void _loadProducts() async {
+    final data = await controller.getAllProducts();
+
+    if (data.isEmpty) {
+      await controller.insertProduct(StaticData.products.first);
+    }
+
+    setState(() {
+      products = data;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
+    List<RFQProductCard> card = [];
+    for (var p in products) {
+      card.add(RFQProductCard(
+        suppliers: '${p.price} suppliers providing',
+        title: p.name,
+        customization:
+            'Customization: Color, Outsole Material, Upper Material, Lining...',
+        imagePlaceholder: p.media.first.url,
+      ));
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request for Quotation'),
@@ -769,9 +816,12 @@ class RFQPage extends StatelessWidget {
                 child: const Text('Write RFQ details'),
               ),
             ),
+            const SizedBox(
+              height: 16,
+            ),
             Container(
               color: Colors.white,
-              child: const Column(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
@@ -781,35 +831,10 @@ class RFQPage extends StatelessWidget {
                       style: TextStyle(fontSize: 16),
                     ),
                   ),
-                  RFQProductCard(
-                    suppliers: '1,292 suppliers providing',
-                    title: 'Basketball Style Shoes',
-                    customization:
-                        'Customization: Color, Outsole Material, Upper Material, Lining...',
-                    imagePlaceholder: 'Shoes',
-                  ),
-                  RFQProductCard(
-                    suppliers: '4,542 suppliers providing',
-                    title: 'Mobile Phone Holders',
-                    customization:
-                        'Customization: Material, Customized Logo, Customized...',
-                    imagePlaceholder: 'Phone holder',
-                  ),
-                  RFQProductCard(
-                    suppliers: '29,872 suppliers providing',
-                    title: 'Men\'s T-Shirts',
-                    customization: '',
-                    imagePlaceholder: 'T-shirts',
-                  ),
-                  RFQProductCard(
-                    suppliers: '1,826 suppliers providing',
-                    title: 'Reflective Safety Clothing',
-                    customization: '',
-                    imagePlaceholder: 'Clothing',
-                  ),
+                  ...card
                 ],
               ),
-            ),
+            )
           ],
         ),
       ),
@@ -874,7 +899,7 @@ class RFQProductCard extends StatelessWidget {
                 width: 100,
                 height: 100,
                 color: Colors.grey[300],
-                child: Center(child: Text(imagePlaceholder)),
+                child: Center(child: Image.asset(imagePlaceholder)),
               ),
               const SizedBox(width: 16),
               Expanded(

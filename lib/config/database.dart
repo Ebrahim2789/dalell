@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:dalell/container/info_page.dart';
 import 'package:dalell/container/listdemo.dart';
+import 'package:dalell/product/models/product.dart';
 import 'package:path/path.dart';
-import '../data/models/product.dart';
 import 'package:flutter/material.dart';
 //in main.dart write this:
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
@@ -118,7 +118,7 @@ class DatabaseHelper {
           product.name,
           product.description,
           product.price,
-          product.imageUrl
+   
         ]);
     log('inserted $data');
   }
@@ -197,7 +197,7 @@ class _MyAppState extends State<MyApp> {
       name: "name",
       description: "description",
       price: 78,
-      imageUrl: "imageUrl",
+
     );
     // final product =
      await dbHelper.insertProduct(newProduct);

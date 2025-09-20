@@ -7,12 +7,53 @@ class ProductListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+  int notificationCount = 0; // Replace with your dynamic value
+
     return Scaffold(
-      appBar: AppBar(title: const Text('All Products')),
-      body: Expanded(
-        child: FutureBuilder<List<Product>>(
+      appBar: AppBar(
+        title: const Text('All Products'),
+        actions: [
+          Stack(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.shopping_cart),
+                onPressed: () {
+                  // Handle cart tap
+                },
+              ),
+              if (notificationCount > 0)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                    padding: const EdgeInsets.all(2),
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    constraints: const BoxConstraints(
+                      minWidth: 18,
+                      minHeight: 18,
+                    ),
+                    child: Text(
+                      '$notificationCount',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                ),
+            ],
+          ),
+        ],
+      ),
+      body: 
+        FutureBuilder<List<Product>>(
           future: TrendingItems().getProductList(),
-          builder: (BuildContext context, snapshot) {
+          builder: (BuildContext context, snapshot, ) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(child: CircularProgressIndicator());
             } else if (snapshot.connectionState == ConnectionState.none) {
@@ -29,6 +70,7 @@ class ProductListPage extends StatelessWidget {
                   );
                 } else {
                   List<Product> data = snapshot.data!;
+                    var screenSize = MediaQuery.of(context).size;
 
                   return GridView.builder(
                     padding: const EdgeInsets.all(4.0),
@@ -36,14 +78,15 @@ class ProductListPage extends StatelessWidget {
                     shrinkWrap: true,
                     physics: const ScrollPhysics(),
                     gridDelegate:
-                        const SliverGridDelegateWithMaxCrossAxisExtent(
-                            maxCrossAxisExtent: 200,
+                        SliverGridDelegateWithFixedCrossAxisCount (
+                          crossAxisCount: screenSize.width>600?4:2,
+                       
                             childAspectRatio: 3 / 4.8,
                             crossAxisSpacing: 10,
                             mainAxisSpacing: 10),
                     itemBuilder: (context, index) {
                       var product = data[index];
-                      print(product.name);
+               
                       return GestureDetector(
                           onTap: () {},
                           child: Container(
@@ -60,8 +103,8 @@ class ProductListPage extends StatelessWidget {
                                 ),
                               ],
                             ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                            child: Wrap(
+                              
                               children: [
                                 ClipRRect(
                                   borderRadius: BorderRadius.circular(8),
@@ -70,7 +113,9 @@ class ProductListPage extends StatelessWidget {
                                     tag: product.id!,
                                     child: Image(
                                       image: AssetImage(
-                                        product.media[index].url!,
+                                        product.media.first.url!,
+                                        
+                               
                                       ),
                                       fit: BoxFit.cover,
                                       width: double.infinity,
@@ -91,12 +136,15 @@ class ProductListPage extends StatelessWidget {
                                 const SizedBox(
                                   height: 5,
                                 ),
-                                Text(product.name!,
+                                Text(product.name,
                                     maxLines: 2,
                                     overflow: TextOverflow.ellipsis,
                                     textAlign: TextAlign.left,
                                     style:
                                         Theme.of(context).textTheme.bodyMedium),
+
+                                  Text(product.description.trimLeft(),  style:
+                                        Theme.of(context).textTheme.bodyMedium  ),
                                 Row(
                                   children: [
                                     Text("\$${product.price.toString()}",
@@ -112,6 +160,7 @@ class ProductListPage extends StatelessWidget {
                                         iconSize: 25,
                                         onPressed: () {
                                           // .addToCart(product, 1, "");
+                                          notificationCount++;
                                         }),
                                   ],
                                 )
@@ -129,47 +178,9 @@ class ProductListPage extends StatelessWidget {
             return const Text("");
           },
         ),
-      ),
+      
 
-      // FutureBuilder<List<Product>>(
-      //   future: TrendingItems().getProductList(),
-      //   builder: (context, snapshot) {
-      //     if (snapshot.connectionState == ConnectionState.waiting) {
-      //       return const Center(child: CircularProgressIndicator());
-      //     }
-      //     if (snapshot.hasError) {
-      //       return Center(child: Text('Error: ${snapshot.error}'));
-      //     }
-      //     final products = snapshot.data ?? [];
-      //     if (products.isEmpty) {
-      //       return const Center(child: Text('No products found.'));
-      //     }
-      //     return ListView.builder(
-      //       itemCount: products.length,
-      //       itemBuilder: (context, index) {
-      //         final product = products[index];
-      //         return Card(
-      //           margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-      //           child: ListTile(
-      //             leading: Image.asset(
-      //               product.image!,
-      //               width: 60,
-      //               height: 60,
-      //               fit: BoxFit.cover,
-      //             ),
-      //             name: Text(product.name!),
-      //             subname: Text(product.description!),
-      //             trailing: Text(
-      //               'ETB ${product.price!.toStringAsFixed(2)}',
-      //               style: const TextStyle(
-      //                   fontWeight: FontWeight.bold, color: Colors.orange),
-      //             ),
-      //           ),
-      //         );
-      //       },
-      //     );
-      //   },
-      // ),
+    
     );
   }
 }

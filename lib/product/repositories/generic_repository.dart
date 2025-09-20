@@ -13,24 +13,14 @@ class GenericRepository<T extends Basemodel> {
 
   GenericRepository({ required this.tableName, required this.fromMap});
 
-  /// singleton pattern
 
-  static Database? _database;
-
-
-  /// gets database instance
-  Future<Database> get database async {
-    if (_database != null) return _database!;
-        final db = await dbHelper.database;
- 
-    return db;
-  }
 
   // #docregion Insert
   Future<Result<int>> insert(T items) async {
     try {
+        final db = await dbHelper.database;
 
-      final id = await _database!.insert(tableName, items.toMap(),
+      final id = await db.insert(tableName, items.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
       return Result.ok(id);
     } on Exception catch (e) {
@@ -41,7 +31,8 @@ class GenericRepository<T extends Basemodel> {
   // #docregion Delete
   Future<Result<void>> delete(int id) async {
     try {
-      final rowsDeleted = await _database!.delete(
+        final db = await dbHelper.database;
+      final rowsDeleted = await db.delete(
         tableName,
         where: 'id = ?',
         whereArgs: [id],
@@ -60,7 +51,8 @@ class GenericRepository<T extends Basemodel> {
   // #docregion rowsUpdate
   Future<Result<void>> update(T items) async {
     try {
-      final rowsUpdate= await _database!.update(
+        final db = await dbHelper.database;
+      final rowsUpdate= await db.update(
         tableName,
         items.toMap(),
         where: 'id = ?',
@@ -77,13 +69,28 @@ class GenericRepository<T extends Basemodel> {
   // #enddocregion rowsUpdate
   Future<Result<T?>> getById(int id) async {
     try {
-      final maps = await _database?.query(
+        final db = await dbHelper.database;
+      final maps = await db.query(
         tableName,
         where: 'id = ?',
         whereArgs: [id],
       );
 
-      return Result.ok(fromMap(maps!.first));
+      return Result.ok(fromMap(maps.first));
+    } on Exception catch (e) {
+      return Result.error(e);
+    }
+  }
+  Future<Result<T?>> getByName(String name) async {
+    try {
+        final db = await dbHelper.database;
+      final maps = await db.query(
+        tableName,
+        where: 'name = ?',
+        whereArgs: [name],
+      );
+
+      return Result.ok(fromMap(maps.first));
     } on Exception catch (e) {
       return Result.error(e);
     }
@@ -92,7 +99,8 @@ class GenericRepository<T extends Basemodel> {
   // #docregion GetAll
   Future<Result<List<T>>> getAll() async {
     try {
-      final List<Map<String, dynamic>> maps = await _database!.query(tableName);
+        final db = await dbHelper.database;
+      final List<Map<String, dynamic>> maps = await db.query(tableName);
       final list = List.generate(maps.length, (i) => fromMap(maps[i]));
       return Result.ok(list);
     } on Exception catch (e) {

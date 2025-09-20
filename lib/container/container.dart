@@ -1,4 +1,6 @@
+import 'package:dalell/config/theme/themedata.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class AllContainer extends StatelessWidget {
   final double width;
@@ -226,30 +228,42 @@ class PostionedWidget extends StatelessWidget {
   }
 }
 
+class ContainerCardClass extends StatelessWidget {
+  final Widget child;
+  const ContainerCardClass({super.key, required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final themeNotifeier = Provider.of<ThemeNotifier>(context);
+    return Container(
+      margin: const EdgeInsets.all(10),
+      padding: const EdgeInsets.all(15),
+      decoration: BoxDecoration(
+        color: themeNotifeier.isDarkMode ? Colors.black : Colors.white,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
+      ),
+      child: child,
+    );
+  }
+}
+
 Widget containerCard(Widget child) {
+  return ContainerCardClass(child: child);
+}
+
+Widget containerCard1(Widget child) {
   return Container(
     margin: const EdgeInsets.all(10),
-    padding: const EdgeInsets.all(15),
+    padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      boxShadow: [BoxShadow(color: Colors.grey.shade200, blurRadius: 5)],
+      borderRadius: BorderRadius.circular(10),
+      border: Border.all(color: Colors.grey.shade300),
     ),
     child: child,
   );
 }
-Widget containerCard1(Widget child) {
-  return Container(
 
-          margin: const EdgeInsets.all(10),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: Colors.grey.shade300),
-          ),
-   child: child,
-  );
-}
 Widget container1(Color colors) {
   return Container(
     height: 8,
@@ -261,19 +275,18 @@ Widget container1(Color colors) {
 }
 
 Widget containerWithConstaran(Widget child) {
-  return 
-       Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.orange[100]!, Colors.blue[50]!],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: child,
-       );
+  return Container(
+    padding: const EdgeInsets.all(16),
+    decoration: BoxDecoration(
+      gradient: LinearGradient(
+        colors: [Colors.orange[100]!, Colors.blue[50]!],
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+      ),
+      borderRadius: BorderRadius.circular(12),
+    ),
+    child: child,
+  );
 }
 
 Widget container2(Color colors, double progress) {
@@ -287,51 +300,51 @@ Widget container2(Color colors, double progress) {
   );
 }
 
-
-  Widget buildPrizeBox(String title, IconData icon) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(title),
-          Icon(icon, size: 40, color: Colors.orange),
-        ],
-      ),
-    );
-  }
-
-  Widget buildDrawBox() {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.yellow,
-        borderRadius: BorderRadius.circular(8),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text('0', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const Text('Number of draws'),
-          ElevatedButton(
-            onPressed: () {},
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
-            child: const Text('Start'),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget buildRecordRow(String user, String data, String reward) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+Widget buildPrizeBox(String title, IconData icon) {
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(user, style: const TextStyle(color: Colors.white)),
-        Text(data, style: const TextStyle(color: Colors.white)),
-        Text(reward, style: const TextStyle(color: Colors.white)),
+        Text(title),
+        Icon(icon, size: 40, color: Colors.orange),
       ],
-    );
-  }
+    ),
+  );
+}
+
+Widget buildDrawBox() {
+  return Container(
+    decoration: BoxDecoration(
+      color: Colors.yellow,
+      borderRadius: BorderRadius.circular(8),
+    ),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text('0',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+        const Text('Number of draws'),
+        ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(backgroundColor: Colors.orange),
+          child: const Text('Start'),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildRecordRow(String user, String data, String reward) {
+  return Row(
+    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    children: [
+      Text(user, style: const TextStyle(color: Colors.white)),
+      Text(data, style: const TextStyle(color: Colors.white)),
+      Text(reward, style: const TextStyle(color: Colors.white)),
+    ],
+  );
+}

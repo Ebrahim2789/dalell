@@ -1,6 +1,8 @@
 import 'package:dalell/container/container.dart';
 import 'package:dalell/order/views/address_list_view.dart';
+import 'package:dalell/routes/routes.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 
 class Setting extends StatelessWidget {
   const Setting({super.key});
@@ -15,7 +17,6 @@ class Setting extends StatelessWidget {
           'Setting',
           style: TextStyle(color: Colors.black, fontSize: 16),
         ),
-
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -23,10 +24,11 @@ class Setting extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text('Setting', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+              const Text('Setting',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
               const SizedBox(height: 16),
-          containerWithConstaran(
-                 const Row(
+              containerWithConstaran(
+                const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Row(
@@ -36,7 +38,9 @@ class Setting extends StatelessWidget {
                         Text('Added today', style: TextStyle(fontSize: 16)),
                       ],
                     ),
-                    Text('0', style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+                    Text('0',
+                        style: TextStyle(
+                            fontSize: 24, fontWeight: FontWeight.bold)),
                   ],
                 ),
               ),
@@ -68,10 +72,14 @@ class Setting extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildCategoryBox(Icons.settings, 'Setting', Colors.white,context),
-                  _buildCategoryBox(Icons.dark_mode, 'Themes', Colors.pink[50]!,context),
-                  _buildCategoryBox(Icons.language, 'Language', Colors.pink[50]!,context),
-                  _buildCategoryBox(Icons.toggle_on_sharp, 'Tools', Colors.pink[50]!,context),
+                  _buildCategoryBox(
+                      Icons.settings, 'Setting', Colors.white, context,RouteGenerator),
+                  _buildCategoryBox(
+                      Icons.dark_mode, 'Themes', Colors.pink[50]!, context,RouteGenerator.appTheme),
+                  _buildCategoryBox(
+                      Icons.language, 'Language', Colors.pink[50]!, context,RouteGenerator),
+                  _buildCategoryBox(Icons.toggle_on_sharp, 'Tools',
+                      Colors.pink[50]!, context,RouteGenerator),
                 ],
               ),
               const SizedBox(height: 24),
@@ -79,7 +87,8 @@ class Setting extends StatelessWidget {
               ListTile(
                 leading: const CircleAvatar(
                   backgroundColor: Colors.black,
-                  child: Icon(Icons.attach_money, color: Colors.white, size: 16),
+                  child:
+                      Icon(Icons.attach_money, color: Colors.white, size: 16),
                 ),
                 title: const Text('Product Assets'),
                 trailing: const Icon(Icons.arrow_forward_ios),
@@ -88,10 +97,14 @@ class Setting extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildCategoryBox(Icons.pie_chart, '0\nTeam assets', Colors.blue ,context),
-                  _buildCategoryBox(const Text('B'), '0\nAsset', Colors.blue[50]!,context),
-                  _buildCategoryBox(const Text('C'), '0\nAsset', Colors.blue[50]!,context),
-                  _buildCategoryBox(const Text('D'), '0\nAsset', Colors.blue[50]!,context),
+                  _buildCategoryBox(
+                      Icons.shopping_bag, 'My Order', Colors.blue, context,RouteGenerator.orderPage),
+                  _buildCategoryBox(Icons.delivery_dining, 'Delivery',
+                      Colors.blue[50]!, context,RouteGenerator.deliverisPage),
+                  _buildCategoryBox(Icons.location_city, 'Address',
+                      Colors.blue[50]!, context,RouteGenerator.addressPage),
+                  _buildCategoryBox(Icons.production_quantity_limits_rounded,
+                      'Product', Colors.blue[50]!, context,RouteGenerator.cartPage),
                 ],
               ),
               const SizedBox(height: 24),
@@ -108,10 +121,13 @@ class Setting extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  _buildCategoryBox(Icons.pie_chart, '0', Colors.teal,context),
-                  _buildCategoryBox(const Text('B'), '0', Colors.teal[50]!,context),
-                  _buildCategoryBox(const Text('C'), '0', Colors.teal[50]!,context),
-                  _buildCategoryBox(const Text('D'), '0', Colors.teal[50]!,context),
+                  _buildCategoryBox(Icons.home_max_outlined, 'DashBoard', Colors.teal, context,RouteGenerator),
+                  _buildCategoryBox(
+                    Icons.reviews_outlined, 'Review', Colors.teal[50]!, context,RouteGenerator),
+                  _buildCategoryBox(
+                      Icons.delivery_dining_sharp, 'Suppliers', Colors.teal[50]!, context,RouteGenerator),
+                  _buildCategoryBox(
+                      Icons.data_usage, 'Statistics', Colors.teal[50]!, context,RouteGenerator),
                 ],
               ),
             ],
@@ -123,7 +139,6 @@ class Setting extends StatelessWidget {
 
   Widget _buildStatBox(String title, String value) {
     return Container(
-   
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       decoration: BoxDecoration(
         color: Colors.grey[200],
@@ -133,37 +148,28 @@ class Setting extends StatelessWidget {
     );
   }
 
-  Widget _buildCategoryBox(dynamic icon, String label, Color color, BuildContext context) {
+  Widget _buildCategoryBox(
+      dynamic icon, String label, Color color, context,  PageRoute ) {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color:Colors.orange,
+        color: Colors.orange,
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
           if (icon is IconData) Icon(icon, color: color) else icon,
-       TextButton(onPressed: (){
+          TextButton(
+            onPressed: () {
+            
+             Navigator.of(context)
+                    .pushNamed(PageRoute);
 
-        if (label=='Themes') {
-          // Navigator.popAndPushNamed(context, routeName)
-          
-        }
-
-        else if(label=='Setting'){
-           Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (_) => AddressListView()),
-                    );
-
-        }
-
-       }, child:    
-       
-        Text(label, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
-      )
-       
-       
+            },
+            child: Text(label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(fontSize: 12)),
+          )
         ],
       ),
     );

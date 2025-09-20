@@ -154,6 +154,7 @@ class MePage extends StatelessWidget {
               const SizedBox(height: 10),
               _buildServiceItem('My orders', Icons.reorder, context),
               _buildServiceItem('Redeem code', Icons.redeem, context),
+              
               _buildServiceItem('Invite link', Icons.person_add, context),
               _buildServiceItem('Change Password', Icons.lock, context),
             ],
@@ -181,7 +182,7 @@ class MePage extends StatelessWidget {
       onTap: () => (title) {
         if (title == "My orders") {
           Navigator.of(context).pushNamed(
-            RouteGenerator.homePages,
+            RouteGenerator.orderPage,
           );
         } else if (title == "Redeem code") {
           Navigator.of(context).pushNamed(

@@ -45,7 +45,7 @@ class _AttributeTreeScreenState extends State<AttributeTreeScreen> {
 
   // List to keep track of selected options
   final List<String> _selectedOptions = [];
-
+  final List<String> _selectedAtterbute = [];
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,6 +88,7 @@ class _AttributeTreeScreenState extends State<AttributeTreeScreen> {
                 setState(() {
                   if (selected == true) {
                     _selectedOptions.add(node.title);
+                    _selectedAtterbute.add(node.title);
                   } else {
                     _selectedOptions.remove(node.title);
                   }

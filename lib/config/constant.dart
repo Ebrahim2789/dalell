@@ -98,7 +98,7 @@ class ProductCard extends StatelessWidget {
       final double height = MediaQuery.of(context).size.height;
       return Padding(
         padding: const EdgeInsets.symmetric(horizontal: 8.0),
-        child: Column(
+        child: Wrap(
           children: [
             Container(
               width: width / 3,
@@ -145,6 +145,94 @@ Widget statsItem(String title, String value) {
       Text(value, style: const TextStyle(fontWeight: FontWeight.bold)),
     ],
   );
+}
+
+
+class ProductCrad extends StatelessWidget {
+
+ final  List<String> title;
+ final List<dynamic> data;
+ final String imageUrl;
+
+  const ProductCrad({super.key, required this.title, required this.data, required this.imageUrl});
+
+  
+
+  @override
+  Widget build(BuildContext context) {
+  Iterator<String> titles = title.iterator;
+  List<dynamic> datas =[];
+for(var dy in data){
+  datas.add(dy);
+}
+
+
+
+  List<Widget> itemWidget = [];
+   var valu=datas.map((v)=>v);
+
+   
+
+  while (titles.moveNext() && datas.iterator.moveNext()) {
+   
+
+
+    itemWidget.add(
+      Text("${titles.current}:  ${valu.map((v)=>v)}"),
+    );}
+    
+    return  GestureDetector(
+      onTap: () {
+        Navigator.of(context).pushNamed(RouteGenerator.productDetails);
+      },
+      child: containerCard(
+        Row(
+          children: [
+            // Product Image
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Stack(
+                children: [
+                  Image.asset(
+                    imageUrl,
+                    width: 70,
+                    height: 70,
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    top: 5,
+                    left: 5,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 4, vertical: 2),
+                      color: Colors.red,
+                      child: Text(
+                        'p1',
+                        style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 12,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+
+            // Details
+            Expanded(
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: itemWidget
+
+              
+                  ),
+            ),
+          ],
+        ),
+      ));
+  }
 }
 
 // Product Card widget
@@ -238,3 +326,19 @@ Widget tabButton(String text, bool isSelected) {
     ),
   );
 }
+
+  Widget buildRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 14)),
+          Text(value,
+              style:
+                  const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)),
+        ],
+      ),
+    );
+  }
+

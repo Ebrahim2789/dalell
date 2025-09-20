@@ -1,7 +1,7 @@
 import 'dart:convert';
 
+import 'package:dalell/product/models/product.dart';
 import 'package:flutter/material.dart';
-import 'package:dalell/data/models/product.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});

@@ -37,6 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void initState() {
+      checkLogin();
    
     super.initState();
   }
@@ -157,11 +158,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                               );
-                              // Navigate to home screen or role-based screen
-              
-                      
-
-                              //   if (state is AuthAuthenticated) {
+                        
                               if (state.user.role == 'admin') {
                                 Navigator.pushReplacementNamed(
                                     context, RouteGenerator.marchentPages);

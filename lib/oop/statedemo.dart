@@ -411,7 +411,12 @@ class SubCategoryItem extends StatelessWidget {
         CircleAvatar(
           radius: 40,
           backgroundColor: Colors.grey[300],
-          child: Text(imagePlaceholder, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
+          child:ClipOval(
+            child:     Image.asset(imagePlaceholder,),
+          )
+          
+    
+          // Text(imagePlaceholder, textAlign: TextAlign.center, style: const TextStyle(fontSize: 12)),
         ),
         const SizedBox(height: 4),
         Text(name, style: const TextStyle(fontSize: 12), textAlign: TextAlign.center),
@@ -442,7 +447,9 @@ class ProductInspirationCard extends StatelessWidget {
             width: 150,
             height: 150,
             color: Colors.grey[300],
-            child: Center(child: Text(imagePlaceholder, textAlign: TextAlign.center)),
+            child: Center(child: 
+            
+            Image.asset(imagePlaceholder)),
           ),
           const SizedBox(width: 16),
           Column(
